@@ -1,103 +1,106 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import MouseFollower from "@/components/MouseFollower";
+import AnimatedText from "@/components/AnimatedText";
+
+const loremText = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque dignissim felis id porttitor. Nulla hendrerit neque ut aliquam pretium. Nulla posuere, felis sed lobortis aliquet, diam velit rhoncus ex, vitae consequat lacus velit eget nunc. Nam sodales metus sit amet tellus egestas, id scelerisque sapien placerat. Quisque at varius lorem. Suspendisse interdum, erat et faucibus cursus, purus odio lobortis metus, eget venenatis nunc ex et eros. Pellentesque sit amet sollicitudin elit. Fusce pulvinar dui id porttitor finibus. Donec at efficitur est, non aliquet quam. Nullam varius quis velit et venenatis. Phasellus sit amet commodo orci, eget fringilla eros.
+
+Phasellus enim sem, ultricies ac venenatis placerat, facilisis ac lectus. In facilisis ligula nisl, at sollicitudin ante elementum vel. Curabitur faucibus congue ex sit amet ultrices. Etiam non porttitor elit. Curabitur in enim blandit, efficitur urna luctus, fringilla leo. Sed aliquam ante et aliquet fringilla. Curabitur eu dolor rutrum, tincidunt augue quis, iaculis diam. Integer in diam sit amet ipsum sollicitudin venenatis. Duis massa erat, suscipit sed pulvinar eget, vulputate non velit. Cras tempus facilisis ante, sed cursus lectus.
+
+Ut massa ligula, pharetra ut leo vitae, hendrerit bibendum sem. Aenean sem neque, convallis sed odio vel, accumsan efficitur tellus. Aenean commodo varius dolor. Quisque vehicula euismod magna sed interdum. Duis pretium, erat et tincidunt rhoncus, lorem velit suscipit lectus, laoreet vestibulum nibh odio id nibh. Donec tincidunt tincidunt ultricies. Quisque turpis nulla, luctus eu lacus non, luctus porttitor lectus. Morbi pretium nisi magna, vel cursus libero ullamcorper scelerisque. Aliquam erat volutpat.
+
+Quisque at velit eleifend neque vehicula tristique mollis mollis nisi. Duis lacinia libero in nulla fermentum faucibus. Praesent vel massa fringilla, ornare metus non, aliquet dui. Mauris mattis justo at justo bibendum venenatis. Etiam a placerat erat. Proin pharetra tellus ac erat posuere, et malesuada ipsum feugiat. Morbi sodales sodales diam, sit amet dapibus nibh aliquet mattis. Integer in mi id erat laoreet facilisis. Nullam nec erat ac tellus imperdiet sollicitudin non et urna.
+
+Nullam hendrerit metus sed quam tincidunt, ut fermentum eros vestibulum. Nam vel magna sit amet nunc mattis mollis. Aliquam erat volutpat. Sed nec sem elementum, dignissim nulla at, iaculis lorem. Vestibulum auctor ac sapien sed consequat. Nulla vulputate diam mauris, feugiat cursus justo finibus vel. Nunc aliquet dapibus purus. Phasellus at posuere metus. Sed pharetra feugiat tortor at sagittis. Sed consequat rhoncus lacinia.`;
+
+export default function HomePage() {
+  const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
+  const [isMouseIn, setIsMouseIn] = useState(false);
+
+  const handleMouseMove = (e) => {
+    setMousePos({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseEnter = () => setIsMouseIn(true);
+  const handleMouseLeave = () => setIsMouseIn(false);
+
+  const circleSizeVW = 2;
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <main
+      className="relative bg-[#12131d] h-screen flex flex-col items-center overflow-auto"
+      style={{
+        cursor: "none",
+        paddingTop: "5vh",
+      }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <img
+        src="/bluenoise.png"
+        alt="Bluenoise background"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          objectFit: "cover",
+          pointerEvents: "none",
+          zIndex: 0,
+          userSelect: "none",
+          opacity: 0.2,
+        }}
+      />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      <div className="absolute inset-0 z-5 pointer-events-none">
+        <MouseFollower />
+      </div>
+
+      <img
+        src="/logo.png"
+        alt="Logo"
+        className="z-10"
+        style={{
+          width: "8vw",
+          height: "auto",
+          marginBottom: "5vh",
+        }}
+      />
+
+      <div className="flex-grow flex items-start justify-center z-10">
+        <AnimatedText />
+      </div>
+
+      <div
+        style={{
+          position: "fixed",
+          top: `calc(${mousePos.y}px - ${circleSizeVW / 2}vw)`,
+          left: `calc(${mousePos.x}px - ${circleSizeVW / 2}vw)`,
+          width: `${circleSizeVW}vw`,
+          height: `${circleSizeVW}vw`,
+          borderRadius: "50%",
+          border: `1px solid white`,
+          backgroundColor: "transparent",
+          pointerEvents: "none",
+          zIndex: 1000,
+          transition:
+            "transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1)",
+          transform: isMouseIn ? "scale(1)" : "scale(0)",
+          opacity: isMouseIn ? 1 : 0,
+        }}
+      />
+
+      <div className="w-full max-w-3xl text-white px-6 py-12 space-y-12 z-10">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <section key={i}>
+            <h2 className="text-3xl font-bold mb-4">Lorem Ipsum</h2>
+            <p>{loremText}</p>
+          </section>
+        ))}
+      </div>
+    </main>
   );
 }
