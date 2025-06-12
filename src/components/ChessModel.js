@@ -6,4 +6,4 @@ export function ChessModel(props) {
   return <primitive object={scene} {...props} />;
 }
 
-useGLTF.preload("/models/chess.glb");
+useGLTF.preload("/models/Chess.glb");
