@@ -1,19 +1,113 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect, useRef } from "react"; // Added React import for clarity
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Environment } from "@react-three/drei";
+
+// --- Components (Assuming they are in the correct paths) ---
 import MouseFollower from "@/components/MouseFollower";
 import AnimatedText from "@/components/AnimatedText";
+import { ChessModel } from "../components/ChessModel";
 
-const loremText = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque dignissim felis id porttitor. Nulla hendrerit neque ut aliquam pretium. Nulla posuere, felis sed lobortis aliquet, diam velit rhoncus ex, vitae consequat lacus velit eget nunc. Nam sodales metus sit amet tellus egestas, id scelerisque sapien placerat. Quisque at varius lorem. Suspendisse interdum, erat et faucibus cursus, purus odio lobortis metus, eget venenatis nunc ex et eros. Pellentesque sit amet sollicitudin elit. Fusce pulvinar dui id porttitor finibus. Donec at efficitur est, non aliquet quam. Nullam varius quis velit et venenatis. Phasellus sit amet commodo orci, eget fringilla eros.
+// --- Helper Components for 3D Scene (Unchanged) ---
+function AdjustCamera() {
+  const { camera } = useThree();
+  useEffect(() => {
+    const radius = 7;
+    const angle = -Math.PI / 2;
+    camera.position.x = radius * Math.cos(angle);
+    camera.position.z = radius * Math.sin(angle);
+    camera.position.y = 5;
+    camera.lookAt(0, 0, 0);
+  }, [camera]);
+  return null;
+}
 
-Phasellus enim sem, ultricies ac venenatis placerat, facilisis ac lectus. In facilisis ligula nisl, at sollicitudin ante elementum vel. Curabitur faucibus congue ex sit amet ultrices. Etiam non porttitor elit. Curabitur in enim blandit, efficitur urna luctus, fringilla leo. Sed aliquam ante et aliquet fringilla. Curabitur eu dolor rutrum, tincidunt augue quis, iaculis diam. Integer in diam sit amet ipsum sollicitudin venenatis. Duis massa erat, suscipit sed pulvinar eget, vulputate non velit. Cras tempus facilisis ante, sed cursus lectus.
+function MaterialFixer() {
+  const { scene } = useThree();
+  useEffect(() => {
+    scene.traverse((child) => {
+      if (child.isMesh && child.material) {
+        const mat = child.material;
+        mat.roughness = 0.1;
+        mat.metalness = 0.5;
+        mat.envMapIntensity = 1.2;
+      }
+    });
+  }, [scene]);
+  return null;
+}
 
-Ut massa ligula, pharetra ut leo vitae, hendrerit bibendum sem. Aenean sem neque, convallis sed odio vel, accumsan efficitur tellus. Aenean commodo varius dolor. Quisque vehicula euismod magna sed interdum. Duis pretium, erat et tincidunt rhoncus, lorem velit suscipit lectus, laoreet vestibulum nibh odio id nibh. Donec tincidunt tincidunt ultricies. Quisque turpis nulla, luctus eu lacus non, luctus porttitor lectus. Morbi pretium nisi magna, vel cursus libero ullamcorper scelerisque. Aliquam erat volutpat.
+function ChessWrapper() {
+  const groupRef = useRef();
+  const [currentPhase, setCurrentPhase] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
 
-Quisque at velit eleifend neque vehicula tristique mollis mollis nisi. Duis lacinia libero in nulla fermentum faucibus. Praesent vel massa fringilla, ornare metus non, aliquet dui. Mauris mattis justo at justo bibendum venenatis. Etiam a placerat erat. Proin pharetra tellus ac erat posuere, et malesuada ipsum feugiat. Morbi sodales sodales diam, sit amet dapibus nibh aliquet mattis. Integer in mi id erat laoreet facilisis. Nullam nec erat ac tellus imperdiet sollicitudin non et urna.
+  const phases = [
+    { x: 0, y: -6, rotY: 0 },
+    { x: 0, y: 0, rotY: Math.PI },
+    { x: -4, y: 0, rotY: 2 * Math.PI },
+    { x: 4, y: 0, rotY: 3 * Math.PI },
+    { x: -4, y: 0, rotY: 4 * Math.PI },
+    { x: 0, y: 0, rotY: 5 * Math.PI },
+  ];
 
-Nullam hendrerit metus sed quam tincidunt, ut fermentum eros vestibulum. Nam vel magna sit amet nunc mattis mollis. Aliquam erat volutpat. Sed nec sem elementum, dignissim nulla at, iaculis lorem. Vestibulum auctor ac sapien sed consequat. Nulla vulputate diam mauris, feugiat cursus justo finibus vel. Nunc aliquet dapibus purus. Phasellus at posuere metus. Sed pharetra feugiat tortor at sagittis. Sed consequat rhoncus lacinia.`;
+  useEffect(() => {
+    const handleWheel = (event) => {
+      if (isAnimating) return;
+      const isScrollingDown = event.deltaY > 0;
+      const nextPhase = isScrollingDown
+        ? Math.min(currentPhase + 1, phases.length - 1)
+        : Math.max(currentPhase - 1, 0);
+      if (nextPhase !== currentPhase) {
+        setCurrentPhase(nextPhase);
+        setIsAnimating(true);
+      }
+    };
+    window.addEventListener("wheel", handleWheel);
+    return () => window.removeEventListener("wheel", handleWheel);
+  }, [currentPhase, isAnimating, phases.length]);
 
+  useFrame(() => {
+    if (!groupRef.current) return;
+    const target = phases[currentPhase];
+    const lerpFactor = 0.05;
+    groupRef.current.position.x +=
+      (target.x - groupRef.current.position.x) * lerpFactor;
+    groupRef.current.position.y +=
+      (target.y - groupRef.current.position.y) * lerpFactor;
+    groupRef.current.rotation.y +=
+      (target.rotY - groupRef.current.rotation.y) * lerpFactor;
+    if (isAnimating) {
+      const positionThreshold = 0.01;
+      const rotationThreshold = 0.01;
+      const positionReached =
+        Math.abs(groupRef.current.position.x - target.x) < positionThreshold &&
+        Math.abs(groupRef.current.position.y - target.y) < positionThreshold;
+      const rotationReached =
+        Math.abs(groupRef.current.rotation.y - target.rotY) < rotationThreshold;
+      if (positionReached && rotationReached) {
+        groupRef.current.position.x = target.x;
+        groupRef.current.position.y = target.y;
+        groupRef.current.rotation.y = target.rotY;
+        setIsAnimating(false);
+      }
+    }
+  });
+
+  return (
+    <group
+      ref={groupRef}
+      scale={0.08}
+      position={[phases[0].x, phases[0].y, 0]}
+      rotation={[0, phases[0].rotY, 0]}
+    >
+      <ChessModel />
+    </group>
+  );
+}
+
+// --- Main Merged Page Component ---
 export default function HomePage() {
   const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
   const [isMouseIn, setIsMouseIn] = useState(false);
@@ -29,15 +123,13 @@ export default function HomePage() {
 
   return (
     <main
-      className="relative bg-[#12131d] h-screen flex flex-col items-center overflow-auto"
-      style={{
-        cursor: "none",
-        paddingTop: "5vh",
-      }}
+      className="relative bg-[#12131d] h-screen flex flex-col items-center overflow-hidden"
+      style={{ cursor: "none" }}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
+      {/* Background noise image - stays at the very back */}
       <img
         src="/bluenoise.png"
         alt="Bluenoise background"
@@ -55,25 +147,47 @@ export default function HomePage() {
         }}
       />
 
-      <div className="absolute inset-0 z-5 pointer-events-none">
-        <MouseFollower />
-      </div>
-
-      <img
-        src="/logo.png"
-        alt="Logo"
-        className="z-10"
+      {/* 3D CANVAS LAYER - Placed in the background with z-index: 1 */}
+      <div
         style={{
-          width: "8vw",
-          height: "auto",
-          marginBottom: "5vh",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          zIndex: 1,
         }}
-      />
-
-      <div className="flex-grow flex items-start justify-center z-10">
-        <AnimatedText />
+      >
+        <Canvas camera={{ fov: 45 }}>
+          <ambientLight intensity={0.4} />
+          <directionalLight position={[5, 10, 5]} intensity={1.2} />
+          <directionalLight position={[-5, 5, -5]} intensity={0.8} />
+          <Environment preset="city" />
+          <AdjustCamera />
+          <MaterialFixer />
+          <ChessWrapper />
+        </Canvas>
       </div>
 
+      {/* FOREGROUND UI LAYER - Placed on top with z-index: 10 */}
+      <div
+        className="relative w-full h-full flex flex-col items-center"
+        style={{ zIndex: 10, paddingTop: "5vh" }}
+      >
+        <div className="absolute inset-0 z-5 pointer-events-none">
+          <MouseFollower />
+        </div>
+        <img
+          src="/logo.png"
+          alt="Logo"
+          style={{ width: "8vw", height: "auto", marginBottom: "5vh" }}
+        />
+        <div className="flex-grow flex items-start justify-center">
+          <AnimatedText />
+        </div>
+      </div>
+
+      {/* Custom Mouse Cursor - Stays on top of everything with the highest z-index */}
       <div
         style={{
           position: "fixed",
@@ -83,7 +197,6 @@ export default function HomePage() {
           height: `${circleSizeVW}vw`,
           borderRadius: "50%",
           border: `1px solid white`,
-          backgroundColor: "transparent",
           pointerEvents: "none",
           zIndex: 1000,
           transition:
@@ -92,15 +205,6 @@ export default function HomePage() {
           opacity: isMouseIn ? 1 : 0,
         }}
       />
-
-      <div className="w-full max-w-3xl text-white px-6 py-12 space-y-12 z-10">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <section key={i}>
-            <h2 className="text-3xl font-bold mb-4">Lorem Ipsum</h2>
-            <p>{loremText}</p>
-          </section>
-        ))}
-      </div>
     </main>
   );
 }
