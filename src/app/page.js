@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 
@@ -9,6 +9,7 @@ import AdjustCamera from "@/components/scene/AdjustCamera";
 import MaterialFixer from "@/components/scene/MaterialFixer";
 import ChessWrapper from "@/components/scene/ChessWrapper";
 import CustomCursor from "@/components/ui/CustomCursor";
+import Scroll from "@/components/ui/Scroll";
 
 // Import Existing Components
 import MouseFollower from "@/components/MouseFollower";
@@ -17,15 +18,72 @@ import AnimatedText from "@/components/AnimatedText";
 export default function HomePage() {
   const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
   const [isMouseIn, setIsMouseIn] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const [showInstruction, setShowInstruction] = useState(false);
+  const [fadeClass, setFadeClass] = useState("opacity-0");
+
+  const [showScroll, setShowScroll] = useState(true);
+  const [scrollFadeClass, setScrollFadeClass] = useState("fade-in");
+
+  const handleClick = () => {
+    setClicked(true);
+    setTimeout(() => setClicked(false), 150);
+  };
+
+  useEffect(() => {
+    let lastScrollY = 0;
+
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.body.scrollHeight;
+
+      const scrollPercentage =
+        (scrollTop / (documentHeight - windowHeight)) * 100;
+
+      const scrollingDown = scrollTop > lastScrollY;
+      lastScrollY = scrollTop;
+
+      // Instruction fade logic
+      if (scrollPercentage >= 11.11) {
+        if (!showInstruction) {
+          setShowInstruction(true);
+          setFadeClass("fade-in");
+        }
+      } else {
+        if (showInstruction) {
+          setShowInstruction(false);
+          setFadeClass("fade-out");
+        }
+      }
+
+      // Scroll indicator fade logic
+      if (scrollPercentage > 5) {
+        if (showScroll) {
+          setShowScroll(false);
+          setScrollFadeClass("fade-out");
+        }
+      } else {
+        if (!showScroll) {
+          setShowScroll(true);
+          setScrollFadeClass("fade-in");
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [showInstruction, showScroll]);
 
   return (
     <>
       <main
-        className="relative bg- h-screen flex flex-col items-center overflow-hidden"
+        className="relative h-screen flex flex-col items-center overflow-hidden"
         style={{ cursor: "none" }}
         onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
         onMouseEnter={() => setIsMouseIn(true)}
         onMouseLeave={() => setIsMouseIn(false)}
+        onClick={handleClick}
       >
         {/* Background Image */}
         <img
@@ -64,7 +122,7 @@ export default function HomePage() {
         {/* UI Overlay */}
         <div className="relative w-full h-full flex flex-col items-center z-20 pt-[5vh]">
           <div className="absolute inset-0 pointer-events-none">
-            <MouseFollower />
+            {/* <MouseFollower /> */}
           </div>
           <img
             src="/logo.png"
@@ -77,7 +135,30 @@ export default function HomePage() {
         </div>
 
         {/* Custom Mouse Cursor */}
-        <CustomCursor mousePos={mousePos} isMouseIn={isMouseIn} />
+        <CustomCursor
+          mousePos={mousePos}
+          isMouseIn={isMouseIn}
+          clicked={clicked}
+        />
+
+        {/* Scroll Indicator */}
+        <div
+          className={`absolute bottom-[0%] left-1/2 transform -translate-x-1/2 z-30 ${scrollFadeClass}`}
+        >
+          <Scroll />
+        </div>
+
+        {/* Instructional Text */}
+        <div
+          className={`absolute bottom-[9%] left-1/2 transform -translate-x-1/2 z-30 text-white text-center select-none ${fadeClass}`}
+          style={{
+            fontFamily: "Poppins",
+            fontSize: "1.5vw",
+            lineHeight: "1.2",
+          }}
+        >
+          Move the piece to scroll the page
+        </div>
       </main>
 
       {/* Spacer for Scrolling */}
@@ -88,6 +169,39 @@ export default function HomePage() {
           pointerEvents: "none",
         }}
       />
+
+      {/* Animation Styles */}
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(0.5vw);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeOut {
+          from {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateY(0.5vw);
+          }
+        }
+
+        .fade-in {
+          animation: fadeIn 0.2s ease-out forwards;
+        }
+
+        .fade-out {
+          animation: fadeOut 0.1s ease-out forwards;
+        }
+      `}</style>
     </>
   );
 }
