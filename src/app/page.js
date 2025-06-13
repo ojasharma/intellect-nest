@@ -44,7 +44,6 @@ export default function HomePage() {
       const scrollingDown = scrollTop > lastScrollY;
       lastScrollY = scrollTop;
 
-      // Instruction fade logic
       if (scrollPercentage >= 11.11) {
         if (!showInstruction) {
           setShowInstruction(true);
@@ -57,7 +56,6 @@ export default function HomePage() {
         }
       }
 
-      // Scroll indicator fade logic
       if (scrollPercentage > 5) {
         if (showScroll) {
           setShowScroll(false);
@@ -150,14 +148,17 @@ export default function HomePage() {
 
         {/* Instructional Text */}
         <div
-          className={`absolute bottom-[9%] left-1/2 transform -translate-x-1/2 z-30 text-white text-center select-none ${fadeClass}`}
+          className={`absolute bottom-[5%] left-1/2 transform -translate-x-1/2 z-30 text-white text-center select-none ${fadeClass}`}
           style={{
             fontFamily: "Poppins",
             fontSize: "1.5vw",
             lineHeight: "1.2",
           }}
         >
-          Move the piece to scroll the page
+          <div>Move the piece to scroll the page</div>
+          <div className="blue-glow font-light">
+            Knight e4 seems the right move
+          </div>
         </div>
       </main>
 
@@ -200,6 +201,11 @@ export default function HomePage() {
 
         .fade-out {
           animation: fadeOut 0.1s ease-out forwards;
+        }
+
+        .blue-glow {
+          text-shadow: 0 0 4px rgba(100, 150, 255, 0.6),
+            0 0 8px rgba(100, 150, 255, 0.5), 0 0 12px rgba(100, 150, 255, 0.4);
         }
       `}</style>
     </>

@@ -1,0 +1,107 @@
+"use client";
+import { useEffect } from "react";
+import { useGLTF } from "@react-three/drei";
+
+export function ChessModel(props) {
+  const { scene } = useGLTF("/models/chess.glb");
+
+  useEffect(() => {
+    const hiddenNames = [
+      "Circle009", // newly added
+      "Circle012",
+      "Circle013",
+      "Circle014",
+      "Circle023",
+      "Circle019",
+      "Circle028",
+      "Circle029",
+      "Circle030",
+      "Circle031",
+    ];
+
+    scene.traverse((child) => {
+      if (child.isMesh) {
+        const { name } = child;
+
+        if (hiddenNames.includes(name)) {
+          child.visible = false;
+        }
+
+        switch (name) {
+          case "Circle005":
+            child.position.z += 3.2;
+            break;
+          case "Circle007":
+            child.position.z += 5 * 3.2;
+            child.position.x += 2 * 3.2;
+            break;
+          case "Circle008":
+            child.position.z += 3.2;
+            break;
+          case "Circle012":
+            child.position.x += 3.2;
+            break;
+          case "Circle004":
+            child.position.x += 3 * 3.2;
+            break;
+          case "Circle003":
+            child.position.x += 3 * 3.2;
+            child.position.z += 3 * 3.2;
+            break;
+          case "Circle002":
+            child.position.x += 4 * 3.2;
+            child.position.z += 4 * 3.2;
+            break;
+          case "Circle001":
+            child.position.z += 5 * 3.2;
+            break;
+          case "Circle":
+            child.position.x += 3 * 3.2;
+            break;
+          case "Circle015":
+            child.position.x -= 2 * 3.2;
+            break;
+          case "Circle011":
+            child.position.x += 1 * 3.2;
+            break;
+
+          // Corrected Names (No Underscores)
+          case "Circle022":
+            child.position.x -= 6 * 3.2;
+            break;
+          case "Circle020":
+            child.position.z -= 4 * 3.2;
+            break;
+          case "Circle021":
+            child.position.z -= 4 * 3.2;
+            child.position.x += 6 * 3.2;
+            break;
+          case "Circle018":
+            child.position.z -= 2 * 3.2;
+            child.position.x -= 4 * 3.2;
+            break;
+          case "Circle017":
+            child.position.x += 3 * 3.2;
+            break;
+          case "Circle016":
+            child.position.x += 4 * 3.2;
+            child.position.z -= 3 * 3.2;
+            break;
+          case "Circle026":
+            child.position.x -= 5 * 3.2;
+            break;
+          case "Circle027":
+            child.position.x -= 2 * 3.2;
+            child.position.z -= 3.2;
+            break;
+
+          // Circle010 remains unchanged
+        }
+      }
+    });
+  }, [scene]);
+
+  return <primitive object={scene} {...props} />;
+}
+
+useGLTF.preload("/models/chess.glb");

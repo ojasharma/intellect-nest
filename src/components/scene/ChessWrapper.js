@@ -11,13 +11,13 @@ const phases = [
   { x: 0, y: -6, rotY: 0 },
   { x: 0, y: 0, rotY: Math.PI },
   { x: 0, y: 1.5, rotY: Math.PI },
-  { x: -4, y: -1, rotY: 2 * Math.PI },
-  { x: -4, y: 1, rotY: 2 * Math.PI },
-  { x: 4, y: -1, rotY: 3 * Math.PI },
-  { x: 4, y: 1, rotY: 3 * Math.PI },
-  { x: -4, y: -1, rotY: 4 * Math.PI },
-  { x: -4, y: 1, rotY: 4 * Math.PI },
-  { x: 0, y: 0, rotY: 5 * Math.PI },
+  { x: -4, y: -1, rotY: 0.8 * Math.PI },
+  { x: -4, y: 1, rotY: 0.8 * Math.PI },
+  { x: 4, y: -1, rotY: 1.2 * Math.PI },
+  { x: 4, y: 1, rotY: 1.2 * Math.PI },
+  { x: -4, y: -1, rotY: 0.8 * Math.PI },
+  { x: -4, y: 1, rotY: 0.8 * Math.PI },
+  { x: 0, y: 0, rotY: 1 * Math.PI },
 ];
 
 export default function ChessWrapper() {
