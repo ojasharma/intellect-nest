@@ -1,12 +1,9 @@
-// app/components/scene/ChessWrapper.js
-
 "use client";
 
 import React, { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { ChessModel } from "../ChessModel"; // Adjust path if needed
 
-// (Keep the 'phases' array and all the logic from the previous correct version)
 const phases = [
   { x: 0, y: -6, rotY: 0 },
   { x: 0, y: 0, rotY: Math.PI },
@@ -20,7 +17,7 @@ const phases = [
   { x: 0, y: 0, rotY: 1 * Math.PI },
 ];
 
-export default function ChessWrapper() {
+export default function ChessWrapper({ scrollPercentage, scrollToPercent }) {
   const groupRef = useRef();
   const scrollProgress = useRef(0);
 
@@ -30,25 +27,23 @@ export default function ChessWrapper() {
         window.pageYOffset || document.documentElement.scrollTop;
       const scrollHeight =
         document.documentElement.scrollHeight - window.innerHeight;
-      scrollProgress.current = Math.min(scrollTop / scrollHeight, 1);
+      scrollProgress.current =
+        scrollHeight > 0 ? Math.min(scrollTop / scrollHeight, 1) : 0;
     };
 
     handleScroll();
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const getCurrentTransform = (progress) => {
     if (progress >= 1) return phases[phases.length - 1];
-
     const totalPhases = phases.length - 1;
     const phaseProgress = progress * totalPhases;
     const currentIndex = Math.floor(phaseProgress);
     const localProgress = phaseProgress - currentIndex;
-
     const fromPhase = phases[currentIndex];
     const toPhase = phases[currentIndex + 1];
-
     return {
       x: fromPhase.x + (toPhase.x - fromPhase.x) * localProgress,
       y: fromPhase.y + (toPhase.y - fromPhase.y) * localProgress,
@@ -71,8 +66,11 @@ export default function ChessWrapper() {
       position={[phases[0].x, phases[0].y, 0]}
       rotation={[0, phases[0].rotY, 0]}
     >
-      <ChessModel />
-      {/* MAKE SURE <CustomCursor /> IS NOT IN HERE */}
+      <ChessModel
+        scrollProgress={scrollProgress}
+        scrollPercentage={scrollPercentage}
+        scrollToPercent={scrollToPercent}
+      />
     </group>
   );
 }

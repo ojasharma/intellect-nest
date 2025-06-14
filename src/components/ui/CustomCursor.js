@@ -27,7 +27,7 @@ export default function CustomCursor({
         border: `1px solid white`,
         pointerEvents: "none",
         zIndex: 1000,
-        transition: "transform 0.2s ease, opacity 0.4s ease", // faster click effect
+        transition: "transform 0.1s ease, opacity 0.4s ease", // faster click effect
         transform: `scale(${scale})`,
         opacity: isMouseIn ? 1 : 0,
       }}

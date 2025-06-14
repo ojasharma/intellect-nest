@@ -9,7 +9,7 @@ const Scroll = () => {
         className="relative border border-white"
         style={{
           width: "1vw",
-          height: "4vh",
+          aspectRatio: "1/2", // Height = 4x width
           borderRadius: "0.5vw",
         }}
       >
@@ -17,10 +17,10 @@ const Scroll = () => {
           className="absolute bg-white rounded-full animate-scroll-dot"
           style={{
             width: "0.2vw",
-            height: "0.2vw",
+            height: "0.2vw", // dot is square
             left: "50%",
             marginLeft: "-0.1vw",
-            top: "1vh",
+            top: "25%", // relative to container height
           }}
         />
       </div>
@@ -50,7 +50,7 @@ const Scroll = () => {
             }
             100% {
               opacity: 0;
-              transform: translateY(2vh);
+              transform: translateY(100%);
             }
           }
 
