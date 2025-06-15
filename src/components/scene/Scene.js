@@ -53,3 +53,4 @@ export default function Scene({ scrollPercentage, scrollToPercent }) {
     </div>
   );
 }
+

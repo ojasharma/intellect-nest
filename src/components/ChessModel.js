@@ -4,126 +4,107 @@ import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 
-export function ChessModel({
-  scrollProgress,
-  scrollPercentage,
-  scrollToPercent,
-  ...props
-}) {
+export function ChessModel({ scrollPercentage, scrollToPercent, ...props }) {
   const { scene } = useGLTF("/models/chess.glb");
   const initialPositions = useRef({});
-  const unit = 3.2;
+  const unit = 2*3.2;
 
-  // Memoize event handlers for performance
-  const handlePointerClick = useCallback(
-    (event) => {
-      // Prevent the main page's click handler from firing
-      event.stopPropagation();
+  // 💡 ADD THIS: A ref to track if our one-time setup has run.
+  const isInitialized = useRef(false);
 
-      // Check if the clicked object is our target and if scroll is in range
-      if (event.object.name === "Circle022") {
-        if (scrollPercentage >= 11.11 && scrollPercentage <= 22.22) {
-          scrollToPercent(33.33);
-        }
-      }
-    },
-    [scrollPercentage, scrollToPercent]
-  ); // Dependencies for the callback
+  const handlePointerClick = useCallback(/* ... */);
+  const handlePointerOver = useCallback(/* ... */);
+  const handlePointerOut = useCallback(/* ... */);
 
-  const handlePointerOver = useCallback(
-    (event) => {
-      event.stopPropagation();
-      // Show pointer cursor only if the object is clickable
-      if (
-        event.object.name === "Circle022" &&
-        scrollPercentage >= 11.11 &&
-        scrollPercentage <= 22.22
-      ) {
-        document.body.style.cursor = "pointer";
-      }
-    },
-    [scrollPercentage]
-  );
+  // ❌ REMOVED: The problematic useEffect is gone.
+  // The logic will be moved into useFrame.
 
-  const handlePointerOut = useCallback((event) => {
-    event.stopPropagation();
-    // Always reset the cursor to none when leaving the object
-    document.body.style.cursor = "none";
-  }, []);
-
-  // This effect runs once to set up initial scene positions and materials
-  useEffect(() => {
-    const move = (name, x = 0, y = 0, z = 0) => {
-      const obj = scene.getObjectByName(name);
-      if (obj) {
-        obj.position.x += x;
-        obj.position.y += y;
-        obj.position.z += z;
-      }
-    };
-    const hide = (name) => {
-      const obj = scene.getObjectByName(name);
-      if (obj) obj.visible = false;
-    };
-
-    // --- HIDE AND MOVE LOGIC (UNCHANGED) ---
-    [
-      "Circle003",
-      "Circle002",
-      "Circle013",
-      "Circle007",
-      "Circle011",
-      "Circle021",
-      "Circle019",
-      "Circle020",
-      "Circle028",
-    ].forEach(hide);
-    move("Circle001", -3 * unit, 0, 3 * unit);
-    move("Circle004", 6 * unit, 0, 0);
-    move("Circle", 3 * unit, 0, 3.2);
-    move("Circle014", -2 * unit, 0, 3 * unit);
-    move("Circle015", -1 * unit, 0, 1 * unit);
-    move("Circle006", 0, 0, 1 * unit);
-    move("Circle008", 0, 0, 1 * unit);
-    move("Circle010", 0, 0, 1 * unit);
-    move("Circle012", 0, 0, 1 * unit);
-    move("Circle023", 4 * unit, 0, -2 * unit);
-    move("Circle016", 4 * unit, 0, 0);
-    move("Circle017", 1 * unit, 0, -1 * unit);
-    move("Circle018", -2 * unit, 0, -2 * unit);
-    move("Circle022", 0, 0, -4 * unit);
-    move("Circle029", 2 * unit, 0, -4 * unit);
-    move("Circle026", -1 * unit, 0, -2 * unit);
-    move("Circle024", 0, 0, -1 * unit);
-    move("Circle027", -2 * unit, 0, 0);
-    move("Plane001", 4 * unit - 0.1, 0, -1 * unit);
-    move("Plane002", 2 * unit, 0, 0);
-
-    // Store initial positions for animation
-    const animatedObjects = ["Circle", "Circle022", "Plane001", "Plane002"];
-    animatedObjects.forEach((name) => {
-      const obj = scene.getObjectByName(name);
-      if (obj) initialPositions.current[name] = obj.position.clone();
-    });
-
-    // --- GLOW LOGIC (UNCHANGED) ---
-    ["Plane001", "Plane002"].forEach((name) => {
-      const obj = scene.getObjectByName(name);
-      if (obj?.material?.isMeshStandardMaterial) {
-        obj.material.emissive = new THREE.Color(
-          name === "Plane002" ? 0x3a80f7 : 0xffffff
-        );
-        obj.material.emissiveIntensity = 2;
-        obj.material.toneMapped = false;
-      }
-    });
-  }, [scene]);
-
-  // --- useFrame ANIMATION LOGIC (UNCHANGED) ---
   useFrame(() => {
-    if (scrollProgress.current === undefined) return;
+    // 💡 --- START OF THE FIX ---
+    // This block runs our setup logic only ONCE.
+    if (!isInitialized.current && scene.children.length > 0) {
+      const move = (name, x = 0, y = 0, z = 0) => {
+        const obj = scene.getObjectByName(name);
+        if (obj) {
+          obj.position.x += x;
+          obj.position.y += y;
+          obj.position.z += z;
+        } else {
+          console.warn(`Object not found in setup: ${name}`); // Good for debugging
+        }
+      };
+      const hide = (name) => {
+        const obj = scene.getObjectByName(name);
+        if (obj) obj.visible = false;
+      };
+
+      // All your positioning and material setup logic is now here:
+      [
+        "Circle003",
+        "Circle002",
+        "Circle013",
+        "Circle007",
+        "Circle011",
+        "Circle021",
+        "Circle019",
+        "Circle020",
+        "Circle028",
+      ].forEach(hide);
+      move("Circle001", -3 * unit, 0, 3 * unit);
+      move("Circle004", 6 * unit, 0, 0);
+      move("Circle", 3 * unit, 0, unit);
+      move("Circle014", -2 * unit, 0, 3 * unit);
+      move("Circle015", -1 * unit, 0, 1 * unit);
+      move("Circle006", 0, 0, 1 * unit);
+      move("Circle008", 0, 0, 1 * unit);
+      move("Circle010", 0, 0, 1 * unit);
+      move("Circle012", 0, 0, 1 * unit);
+      move("Circle023", 4 * unit, 0, -2 * unit);
+      move("Circle016", 4 * unit, 0, 0);
+      move("Circle017", 1 * unit, 0, -1 * unit);
+      move("Circle018", -2 * unit, 0, -2 * unit);
+      move("Circle022", 0, 0, -4 * unit);
+      move("Circle029", 2 * unit, 0, -4 * unit);
+      move("Circle026", -1 * unit, 0, -2 * unit);
+      move("Circle024", 0, 0, -1 * unit);
+      move("Circle027", -2 * unit, 0, 0);
+      move("Plane001", 4 * unit - 0.1, 0, -1 * unit);
+      move("Plane002", 2 * unit, 0, 0);
+
+      const animatedObjects = ["Circle", "Circle022", "Plane001", "Plane002"];
+      animatedObjects.forEach((name) => {
+        const obj = scene.getObjectByName(name);
+        if (obj) initialPositions.current[name] = obj.position.clone();
+      });
+
+      ["Plane001", "Plane002"].forEach((name) => {
+        const obj = scene.getObjectByName(name);
+        if (obj?.material?.isMeshStandardMaterial) {
+          obj.material.emissive = new THREE.Color(
+            name === "Plane002" ? 0x3a80f7 : 0xffffff
+          );
+          obj.material.emissiveIntensity = 2;
+          obj.material.toneMapped = false;
+        }
+      });
+
+      // 💡 SET THE FLAG: This ensures the setup code never runs again.
+      isInitialized.current = true;
+    }
+    // 💡 --- END OF THE FIX ---
+
+    // Guard to prevent animation from running before initialization is complete.
+    if (
+      !isInitialized.current ||
+      initialPositions.current.Circle022 === undefined
+    )
+      return;
+
+    // The rest of your animation logic remains the same.
+    const scrollProgress = scrollPercentage / 100;
     const totalPhases = 9;
-    const phaseProgress = scrollProgress.current * totalPhases;
+    const phaseProgress = scrollProgress * totalPhases;
+    // ... (rest of your existing useFrame animation code)
     const currentIndex = Math.floor(phaseProgress);
     const circle = scene.getObjectByName("Circle"),
       circle012 = scene.getObjectByName("Circle012"),
@@ -138,23 +119,24 @@ export function ChessModel({
       Math.min(1, (phase2to3Progress - 0.33) * 3)
     );
     const sequenceStep3 = phase2to3Progress > 0.66 ? 1 : 0;
+
     if (circle022 && initialPositions.current.Circle022) {
       circle022.position.z =
-        initialPositions.current.Circle022.z - 2 * unit * sequenceStep1;
+        initialPositions.current.Circle022.z - 2 * unit/2 * sequenceStep1;
       circle022.visible = sequenceStep3 === 0;
     }
     if (circle && initialPositions.current.Circle) {
       circle.position.z =
-        initialPositions.current.Circle.z + 2 * unit * sequenceStep2;
+        initialPositions.current.Circle.z + 2 * unit/2 * sequenceStep2;
     }
     if (circle012) circle012.visible = currentIndex < 2;
     if (plane001 && initialPositions.current.Plane001)
       plane001.position.z =
-        initialPositions.current.Plane001.z + 4.1 * unit * animationProgress;
+        initialPositions.current.Plane001.z + 4.1 * unit/2 * animationProgress;
     if (plane002 && initialPositions.current.Plane002) {
       const initialPos = initialPositions.current.Plane002;
-      plane002.position.z = initialPos.z + 6.05 * unit * animationProgress;
-      plane002.position.x = initialPos.x - 4 * unit * animationProgress;
+      plane002.position.z = initialPos.z + 6.05 * unit/2 * animationProgress;
+      plane002.position.x = initialPos.x - 4 * unit/2 * animationProgress;
     }
   });
 
