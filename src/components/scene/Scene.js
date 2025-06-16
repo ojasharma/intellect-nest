@@ -1,8 +1,8 @@
-"use client";
+// In Scene.js
 
-import React from "react";
+import React, { useState } from "react"; // Keep 'React' for React.memo
 import { Canvas } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
+import { Environment, PerformanceMonitor } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 
 // Import Scene Components
@@ -10,15 +10,23 @@ import AdjustCamera from "@/components/scene/AdjustCamera";
 import MaterialFixer from "@/components/scene/MaterialFixer";
 import ChessWrapper from "@/components/scene/ChessWrapper";
 
-export default function Scene({ scrollPercentage, scrollToPercent }) {
+// Step 2: Wrap the component in React.memo
+const Scene = React.memo(function Scene({ scrollToPercent, totalPhases }) {
+  const [dpr, setDpr] = useState(1.5);
+
   return (
     <div className="fixed top-0 left-0 w-screen h-screen z-10">
       <Canvas
         camera={{ fov: 45 }}
         gl={{ alpha: true, preserveDrawingBuffer: true }}
         style={{ background: "transparent" }}
+        dpr={dpr}
       >
-        {/* Lights */}
+        <PerformanceMonitor
+          onDecline={() => setDpr(1)}
+          onIncline={() => setDpr(1.5)}
+        />
+
         <ambientLight intensity={3.5} color="#6c80b5" />
         <directionalLight
           position={[5, 10, 5]}
@@ -31,16 +39,14 @@ export default function Scene({ scrollPercentage, scrollToPercent }) {
           color="#6c80b5"
         />
 
-        {/* Environment & Scene Contents */}
         <Environment preset="night" background={false} />
         <AdjustCamera />
         <MaterialFixer />
         <ChessWrapper
-          scrollPercentage={scrollPercentage}
           scrollToPercent={scrollToPercent}
+          totalPhases={totalPhases}
         />
 
-        {/* Post-processing Effects */}
         <EffectComposer>
           <Bloom
             mipmapBlur
@@ -52,5 +58,6 @@ export default function Scene({ scrollPercentage, scrollToPercent }) {
       </Canvas>
     </div>
   );
-}
+});
 
+export default Scene;
