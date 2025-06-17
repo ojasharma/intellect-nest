@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-const TEXT = "The Intellect Nest ⏺ Innovating Chess Teaching Since 2020 ⏺ ";
+const TEXT = "The Intellect Nest ♟️ Innovating Chess Teaching Since 2020 ♟️ ";
 
 const FONT_WEIGHTS = [100, 200, 300, 400, 500, 600, 700, 800, 900];
 const FONT_STYLES = ["normal", "italic"];

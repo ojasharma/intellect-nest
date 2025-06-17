@@ -11,8 +11,12 @@ export default function UIOverlay() {
         alt="Logo"
         style={{ width: "8vw", height: "auto", marginBottom: "5vh" }}
       />
-      <div className="flex-grow flex items-start justify-center">
+      <div className="flex-grow flex flex-col items-center justify-start">
         <AnimatedText />
+        <p className="text-white font-poppins text-center mt-4 text-xl">
+          We bring world-class chess training to your kids in a way that's truly
+          affordable
+        </p>
       </div>
     </div>
   );

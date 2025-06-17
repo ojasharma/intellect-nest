@@ -13,7 +13,7 @@ export default function InstructionalText({ fadeClass }) {
       }}
     >
       <div>Click On the Piece to Proceed</div>
-      <div className="blue-glow font-light">Rook H6 seems like the right move!</div>
+      <div className="blue-glow font-light">Rook h6 seems like the right move!</div>
     </div>
   );
 }
