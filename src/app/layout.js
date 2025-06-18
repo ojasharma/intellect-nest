@@ -1,4 +1,6 @@
+// app/layout.js
 import "./globals.css";
+import LiquidGlassWrapper from "../components/LiquidGlassWrapper";
 
 export const metadata = {
   title: "The Intellect Nest",
@@ -8,7 +10,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased relative">
+        <LiquidGlassWrapper>{children}</LiquidGlassWrapper>
+      </body>
     </html>
   );
 }

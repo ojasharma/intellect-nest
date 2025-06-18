@@ -540,65 +540,58 @@ export default function HomePage() {
           </div>
 
           {/* Liquid Glass Button matching feature section styling */}
-          <button
-            className="mt-8 px-10 py-4 rounded-2xl transition-all duration-500 group relative overflow-hidden"
+          <div
             style={{
-              background:
-                "linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)",
-              backdropFilter: "blur(16px) saturate(180%)",
-              WebkitBackdropFilter: "blur(16px) saturate(180%)",
-              border: "1px solid rgba(255, 255, 255, 0.15)",
-              borderRadius: "24px",
+              position: "fixed",
+              bottom: "-80%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "9vw",
+              height: "3vw",
+              backgroundColor: "#7CACFF",
+              borderRadius: "9999px",
+              zIndex: 100,
+              backdropFilter: "blur(12px)",
+              background: "rgba(255, 255, 255, 0.08)",
+              border: "1px solid rgba(255, 255, 255, 0.18)",
               boxShadow:
-                "0 8px 32px rgba(0, 27, 74, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(255, 255, 255, 0.1)",
-              color: "white",
-              fontSize: "1.2rem",
-              fontWeight: "500",
+                "0 8px 30px rgba(0, 27, 74, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(255, 255, 255, 0.05)",
+              transition: "transform 0.3s ease",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateX(-50%) scale(1.05)";
+              const text = e.currentTarget.querySelector("span");
+
+              // Reset animation
+              text.style.animation = "none";
+              void text.offsetWidth; // force reflow to reset animation
+              text.style.animation = "gradientShift 0.7s linear";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateX(-50%) scale(1)";
             }}
           >
-            <span className="relative z-10 group-hover:text-shadow-glow">
+            <span
+              style={{
+                fontSize: "1.5vw",
+                fontWeight: 600,
+                fontFamily: "Poppins, sans-serif",
+                background:
+                  "linear-gradient(90deg, #ffffff 25%, #00a5ff, #ffffff 75%)",
+                backgroundSize: "200% 100%",
+                backgroundPosition: "0% 0%",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                color: "transparent",
+              }}
+            >
               Join Now
             </span>
-
-            {/* Shimmer effect */}
-            <div
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              style={{
-                background:
-                  "linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%)",
-                transform: "translateX(-100%)",
-                animation: "shimmer 2s infinite",
-              }}
-            />
-
-            {/* Floating particles like in features */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
-              <div
-                className="absolute w-1 h-1 bg-white rounded-full"
-                style={{
-                  top: "20%",
-                  left: "15%",
-                  animation: "float 3s ease-in-out infinite",
-                }}
-              />
-              <div
-                className="absolute w-0.5 h-0.5 bg-blue-300 rounded-full"
-                style={{
-                  top: "60%",
-                  right: "25%",
-                  animation: "float 4s ease-in-out infinite reverse",
-                }}
-              />
-              <div
-                className="absolute w-0.5 h-0.5 bg-white rounded-full"
-                style={{
-                  bottom: "30%",
-                  left: "70%",
-                  animation: "float 3.5s ease-in-out infinite",
-                }}
-              />
-            </div>
-          </button>
+          </div>
         </div>
         <Scene
           scrollToPercent={scrollToPercent}
@@ -774,6 +767,14 @@ export default function HomePage() {
         .text-shadow-glow {
           text-shadow: 0 0 30px rgba(255, 255, 255, 0.8),
             0 0 60px rgba(51, 187, 255, 0.4);
+        }
+        @keyframes gradientShift {
+          0% {
+            background-position: 0% 0%;
+          }
+          100% {
+            background-position: -200% 0%;
+          }
         }
       `}</style>
     </>
