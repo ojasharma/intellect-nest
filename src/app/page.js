@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import Image from "next/image"; // Import the Next.js Image component
 import { useScrollStore } from "@/src/store";
 
 // Import Modular Components
@@ -147,8 +148,19 @@ const useTypewriter = (text, speed = 50) => {
   return displayText;
 };
 
-// Stats Component
+// *** FIX 1: Create a new component for the count-up number ***
+const StatCounter = ({ endValue }) => {
+  const count = useCountUp(endValue);
+  return <span>{count}+</span>;
+};
 
+// *** FIX 2: Create a new component for the typewriter text ***
+const Typewriter = ({ text, speed }) => {
+  const displayText = useTypewriter(text, speed);
+  return <>{displayText}</>;
+};
+
+// Stats Component
 const StatsSection = ({ stats, isVisible }) => {
   return (
     <div
@@ -194,20 +206,22 @@ const StatsSection = ({ stats, isVisible }) => {
               animation: "shimmer 2s infinite",
             }}
           />
-          <img
+          {/* *** FIX 3: Use Next.js Image component *** */}
+          <Image
             src={stat.img}
             alt={stat.alt}
+            width={40}
+            height={40}
             className="transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-lg relative z-10 mb-2"
             style={{
-              width: "2.5rem",
-              height: "2.5rem",
               filter:
                 "brightness(0) invert(1) drop-shadow(0 0 8px rgba(51, 187, 255, 0.6))",
             }}
           />
           <p className="font-poppins leading-tight text-white relative z-10 transition-all duration-500 group-hover:text-shadow-glow">
             <span className="font-extrabold text-[2.8rem]">
-              {isVisible && <span>{useCountUp(stat.value)}+</span>}
+              {/* Render the new StatCounter component conditionally */}
+              {isVisible && <StatCounter endValue={stat.value} />}
             </span>
             <br />
             <span className="font-light text-base mt-1 block">{stat.text}</span>
@@ -258,16 +272,21 @@ const InstructorsSection = ({ instructors, isVisible }) => {
               width: "300px",
             }}
           >
-            <img
+            {/* *** FIX 3: Use Next.js Image component *** */}
+            <Image
               src={instructor.pfp}
               alt={instructor.alt}
+              width={160}
+              height={160}
               className="w-40 h-40 rounded-full object-cover border-4 border-transparent group-hover:border-blue-400 transition-all duration-300 shadow-lg"
             />
             <h3 className="text-2xl font-semibold mt-4 h-8">
-              {useTypewriter(instructor.name, isVisible ? 70 : 9999)}
+              {/* Render the new Typewriter component conditionally */}
+              {isVisible && <Typewriter text={instructor.name} speed={70} />}
             </h3>
             <p className="text-lg font-light text-blue-300 h-7">
-              {useTypewriter(instructor.rating, isVisible ? 70 : 9999)}
+              {/* Render the new Typewriter component conditionally */}
+              {isVisible && <Typewriter text={instructor.rating} speed={70} />}
             </p>
           </div>
         ))}
@@ -287,6 +306,7 @@ const InstructorsSection = ({ instructors, isVisible }) => {
     </div>
   );
 };
+
 export default function HomePage() {
   const setScrollPercentage = useScrollStore(
     (state) => state.setScrollPercentage
@@ -479,10 +499,13 @@ export default function HomePage() {
         onMouseLeave={() => setIsMouseIn(false)}
         onClick={handleClick}
       >
+        {/* *** FIX 3: Use Next.js Image component *** */}
         <img
           src="/bluenoise.png"
           alt="Bluenoise background"
-          className="fixed top-0 left-0 w-screen h-screen object-cover pointer-events-none select-none z-0 opacity-20"
+          layout="fill"
+          objectFit="cover"
+          className="fixed top-0 left-0 pointer-events-none select-none z-0 opacity-20"
         />
 
         <InstructionalText fadeClass={uiState.instructionalFade} />
@@ -696,13 +719,14 @@ export default function HomePage() {
                   />
                 </div>
 
-                <img
+                {/* *** FIX 3: Use Next.js Image component *** */}
+                <Image
                   src={feature.img}
                   alt={feature.alt}
+                  width={CONSTANTS.FEATURE_SCALE * 16}
+                  height={CONSTANTS.FEATURE_SCALE * 16}
                   className="transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-lg relative z-10"
                   style={{
-                    width: iconSize,
-                    height: iconSize,
                     filter:
                       "brightness(0) invert(1) drop-shadow(0 0 8px rgba(51, 187, 255, 0.6))",
                     marginTop: "1rem",
