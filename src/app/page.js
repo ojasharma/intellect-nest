@@ -30,6 +30,7 @@ const features = [
       <>
         <span className="font-extrabold">Sophisticated Curriculum</span>
         <span className="italic font-light">
+          {" "}
           <br />
           made by International Masters
         </span>
@@ -43,6 +44,7 @@ const features = [
       <>
         <span className="font-extrabold">Highly Experienced</span>
         <span className="italic font-light">
+          {" "}
           <br />
           FIDE rated Coaches
         </span>
@@ -61,6 +63,230 @@ const features = [
   },
 ];
 
+// Stats data
+const stats = [
+  {
+    img: "/4.png",
+    alt: "Students Taught",
+    value: 50,
+    text: "Students Taught",
+  },
+  { img: "/5.png", alt: "Awards Won", value: 10, text: "Awards" },
+  {
+    img: "/6.png",
+    alt: "Classes Taken",
+    value: 400,
+    text: "Classes Taken",
+  },
+  {
+    img: "/7.png",
+    alt: "Years of Experience",
+    value: 5,
+    text: "Years Of Experience",
+  },
+];
+
+// Instructors data
+const instructors = [
+  {
+    name: "Harshit Dawar",
+    rating: "FIDE Rating: 2000",
+    pfp: "/pfp1.png",
+    alt: "Harshit Dawar's profile picture",
+  },
+  {
+    name: "Anushka",
+    rating: "FIDE Rating: 2000",
+    pfp: "/pfp2.png",
+    alt: "Anushka's profile picture",
+  },
+];
+
+// Custom hook for counting animation
+const useCountUp = (end, start = 0, duration = 2000) => {
+  const [count, setCount] = useState(start);
+  const frameRate = 1000 / 60;
+  const totalFrames = Math.round(duration / frameRate);
+
+  useEffect(() => {
+    let frame = 0;
+    const counter = setInterval(() => {
+      frame++;
+      const progress = frame / totalFrames;
+      setCount(Math.round(end * progress));
+
+      if (frame === totalFrames) {
+        clearInterval(counter);
+      }
+    }, frameRate);
+  }, [end, duration, totalFrames]);
+
+  return count;
+};
+
+// Custom hook for typewriter effect
+const useTypewriter = (text, speed = 50) => {
+  const [displayText, setDisplayText] = useState("");
+
+  useEffect(() => {
+    let i = 0;
+    const typingInterval = setInterval(() => {
+      if (i < text.length) {
+        setDisplayText(text.substring(0, i + 1));
+        i++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, speed);
+
+    return () => {
+      clearInterval(typingInterval);
+    };
+  }, [text, speed]);
+
+  return displayText;
+};
+
+// Stats Component
+
+const StatsSection = ({ stats, isVisible }) => {
+  return (
+    <div
+      className={`absolute grid grid-cols-2 gap-5 text-white z-[3]`}
+      style={{
+        top: "940vh",
+        right: "6vw",
+        width: "550px",
+        fontFamily: "Poppins",
+      }}
+    >
+      {stats.map((stat, idx) => (
+        <div
+          key={idx}
+          className={`group flex flex-col items-center justify-center text-center p-6 liquid-glass-box ${
+            isVisible ? "fade-in" : "fade-out"
+          }`}
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? "translateX(0)" : "translateX(20px)",
+            transition:
+              "opacity 0.7s ease, transform 0.7s ease, backdrop-filter 0.5s ease",
+            transitionDelay: `${idx * 100}ms`,
+            background:
+              "linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)",
+            backdropFilter: "blur(16px) saturate(180%)",
+            WebkitBackdropFilter: "blur(16px) saturate(180%)",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
+            borderRadius: "24px",
+            boxShadow:
+              "0 8px 32px rgba(0, 27, 74, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(255, 255, 255, 0.1)",
+            position: "relative",
+            overflow: "hidden",
+            height: "220px",
+          }}
+        >
+          <div
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            style={{
+              background:
+                "linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%)",
+              transform: "translateX(-100%)",
+              animation: "shimmer 2s infinite",
+            }}
+          />
+          <img
+            src={stat.img}
+            alt={stat.alt}
+            className="transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-lg relative z-10 mb-2"
+            style={{
+              width: "2.5rem",
+              height: "2.5rem",
+              filter:
+                "brightness(0) invert(1) drop-shadow(0 0 8px rgba(51, 187, 255, 0.6))",
+            }}
+          />
+          <p className="font-poppins leading-tight text-white relative z-10 transition-all duration-500 group-hover:text-shadow-glow">
+            <span className="font-extrabold text-[2.8rem]">
+              {isVisible && <span>{useCountUp(stat.value)}+</span>}
+            </span>
+            <br />
+            <span className="font-light text-base mt-1 block">{stat.text}</span>
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// Instructors Component
+const InstructorsSection = ({ instructors, isVisible }) => {
+  const headingText = useTypewriter(
+    "Meet Our Instructors",
+    isVisible ? 50 : 9999
+  );
+
+  return (
+    <div
+      className={`absolute flex flex-col items-center text-white z-[3] transition-opacity duration-1000 ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`}
+      style={{
+        top: "1330vh",
+        left: "30%",
+        transform: "translateX(-50%)",
+        fontFamily: "Poppins",
+        width: "100%",
+        padding: "2rem",
+      }}
+    >
+      <h2 className="text-4xl md:text-5xl font-bold mb-16 h-14 font-poppins text-center">
+        {headingText}
+      </h2>
+      <div className="flex flex-col md:flex-row gap-12 justify-center w-full max-w-4xl">
+        {instructors.map((instructor, idx) => (
+          <div
+            key={idx}
+            className="group flex flex-col items-center gap-4 p-8 transition-all duration-500 liquid-glass-box"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 100%)",
+              backdropFilter: "blur(12px) saturate(150%)",
+              WebkitBackdropFilter: "blur(12px) saturate(150%)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: "24px",
+              boxShadow: "0 8px 32px rgba(0, 20, 50, 0.3)",
+              width: "300px",
+            }}
+          >
+            <img
+              src={instructor.pfp}
+              alt={instructor.alt}
+              className="w-40 h-40 rounded-full object-cover border-4 border-transparent group-hover:border-blue-400 transition-all duration-300 shadow-lg"
+            />
+            <h3 className="text-2xl font-semibold mt-4 h-8">
+              {useTypewriter(instructor.name, isVisible ? 70 : 9999)}
+            </h3>
+            <p className="text-lg font-light text-blue-300 h-7">
+              {useTypewriter(instructor.rating, isVisible ? 70 : 9999)}
+            </p>
+          </div>
+        ))}
+      </div>
+      <style jsx>{`
+        .liquid-glass-box:hover {
+          transform: translateY(-8px) scale(1.03);
+          box-shadow: 0 16px 45px rgba(0, 20, 50, 0.35),
+            0 0 50px rgba(51, 187, 255, 0.2);
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.15) 0%,
+            rgba(255, 255, 255, 0.05) 100%
+          );
+        }
+      `}</style>
+    </div>
+  );
+};
 export default function HomePage() {
   const setScrollPercentage = useScrollStore(
     (state) => state.setScrollPercentage
@@ -76,18 +302,19 @@ export default function HomePage() {
     feature1Fade: "fade-out",
     feature2Fade: "fade-out",
     feature3Fade: "fade-out",
+    statsFade: "fade-out",
+    instructorsFade: "fade-out",
   });
 
-  const lastKnownPhaseRef = useRef(0); // For general UI phase tracking
-  const lastKnownScrollPercentageRef = useRef(0); // For precise phase 3 entry/exit
-  const featureTimeoutsRef = useRef([]); // To store timeout IDs for features
+  const lastKnownPhaseRef = useRef(0);
+  const lastKnownScrollPercentageRef = useRef(0);
+  const featureTimeoutsRef = useRef([]);
 
   useEffect(() => {
     const unsubscribe = useScrollStore.subscribe((state) => {
       const scrollPercentage = state.scrollPercentage;
       const phaseUnit = 100 / CONSTANTS.TOTAL_PHASES;
 
-      // Determine if we are within the scroll range for "Phase 3" features
       const phase3StartPercentage = phaseUnit * 2.5;
       const phase4StartPercentage = phaseUnit * 4;
       const isInPhase3ScrollRange =
@@ -98,7 +325,6 @@ export default function HomePage() {
         lastKnownScrollPercentageRef.current >= phase3StartPercentage &&
         lastKnownScrollPercentageRef.current < phase4StartPercentage;
 
-      // Calculate currentPhase for other UI elements (original logic)
       let currentPhase = 0;
       if (scrollPercentage > 5) currentPhase = 1;
       if (scrollPercentage >= phaseUnit * 1) currentPhase = 1.5;
@@ -115,7 +341,6 @@ export default function HomePage() {
       if (scrollPercentage >= phaseUnit * 9) currentPhase = 9;
       if (scrollPercentage >= phaseUnit * 10) currentPhase = 10;
 
-      // Only update state if the general phase changed OR if our "Phase 3 for features" status changed
       const generalPhaseChanged = currentPhase !== lastKnownPhaseRef.current;
       const featurePhaseStatusChanged =
         isInPhase3ScrollRange !== wasInPhase3ScrollRange;
@@ -126,49 +351,40 @@ export default function HomePage() {
           let newFeature2Fade = prevState.feature2Fade;
           let newFeature3Fade = prevState.feature3Fade;
 
-          // Clear existing timeouts for features
           featureTimeoutsRef.current.forEach(clearTimeout);
           featureTimeoutsRef.current = [];
 
           if (isInPhase3ScrollRange) {
             if (!wasInPhase3ScrollRange) {
-              // Just ENTERED Phase 3 scroll range: reset and schedule new fades
-              newFeature1Fade = "fade-out"; // Ensure it starts clean for the transition
+              newFeature1Fade = "fade-out";
               newFeature2Fade = "fade-out";
               newFeature3Fade = "fade-out";
 
               const t1 = setTimeout(() => {
                 setUiState((s) => ({ ...s, feature1Fade: "fade-in" }));
-              }, 0); // Feature 1 appears immediately upon entering phase 3
+              }, 0);
               const t2 = setTimeout(() => {
                 setUiState((s) => ({ ...s, feature2Fade: "fade-in" }));
-              }, 400); // Feature 2 appears 0.1s after entering phase 3
+              }, 400);
               const t3 = setTimeout(() => {
                 setUiState((s) => ({ ...s, feature3Fade: "fade-in" }));
-              }, 500); // Feature 3 appears 0.2s after entering phase 3
+              }, 500);
               featureTimeoutsRef.current.push(t1, t2, t3);
-            } else {
-              // Still in Phase 3, maintain current/timeout-driven states
-              // This path is taken if generalPhaseChanged but featurePhaseStatusChanged is false.
-              // We let the timeouts manage the fade-in. If they've already fired,
-              // prevState will reflect that.
             }
           } else {
-            // NOT in Phase 3 scroll range (either exited or never entered)
             newFeature1Fade = "fade-out";
             newFeature2Fade = "fade-out";
             newFeature3Fade = "fade-out";
           }
 
           return {
-            ...prevState, // Preserve other UI states not explicitly set here
+            ...prevState,
             instructionalFade:
               scrollPercentage >= phaseUnit * 1 - phaseUnit * 0.1 &&
               scrollPercentage < phaseUnit * 2
                 ? "fade-in"
                 : "fade-out",
             scrollIndicatorFade: scrollPercentage > 5 ? "fade-out" : "fade-in",
-            // This text also appears during the entirety of phase 3 scroll range
             greatMoveFade: isInPhase3ScrollRange ? "fade-in" : "fade-out",
             rookMoveFade:
               scrollPercentage >= phaseUnit * 5 &&
@@ -188,6 +404,11 @@ export default function HomePage() {
             feature1Fade: newFeature1Fade,
             feature2Fade: newFeature2Fade,
             feature3Fade: newFeature3Fade,
+            statsFade: currentPhase >= 5 ? "fade-in" : "fade-out",
+            instructorsFade:
+              scrollPercentage >= (1320 / PAGE_HEIGHT_VH) * 100
+                ? "fade-in"
+                : "fade-out",
           };
         });
       }
@@ -196,12 +417,11 @@ export default function HomePage() {
       lastKnownScrollPercentageRef.current = scrollPercentage;
     });
 
-    // Cleanup subscription and any pending timeouts on unmount
     return () => {
       unsubscribe();
       featureTimeoutsRef.current.forEach(clearTimeout);
     };
-  }, []); // Empty dependency array is correct for this subscription pattern
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -214,7 +434,7 @@ export default function HomePage() {
       setScrollPercentage(currentScrollPercentage);
     };
 
-    handleScroll(); // Initial call
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [setScrollPercentage]);
@@ -254,7 +474,6 @@ export default function HomePage() {
     <>
       <main
         className="relative h-screen flex flex-col items-center overflow-hidden"
-        // style={{ cursor: "none" }}
         onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
         onMouseEnter={() => setIsMouseIn(true)}
         onMouseLeave={() => setIsMouseIn(false)}
@@ -440,7 +659,6 @@ export default function HomePage() {
                   overflow: "hidden",
                 }}
               >
-                {/* Liquid glass shimmer effect */}
                 <div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                   style={{
@@ -451,7 +669,6 @@ export default function HomePage() {
                   }}
                 />
 
-                {/* Floating particles effect */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
                   <div
                     className="absolute w-1 h-1 bg-white rounded-full"
@@ -504,6 +721,15 @@ export default function HomePage() {
             );
           })}
         </div>
+
+        <StatsSection
+          stats={stats}
+          isVisible={uiState.statsFade === "fade-in"}
+        />
+        <InstructorsSection
+          instructors={instructors}
+          isVisible={uiState.instructorsFade === "fade-in"}
+        />
       </div>
 
       <style jsx>{`
