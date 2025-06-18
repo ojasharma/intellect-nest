@@ -12,8 +12,11 @@ export default function InstructionalText({ fadeClass }) {
         lineHeight: "1.2",
       }}
     >
+      <div>Play Chess To Navigate The Page or just Scroll,</div>
       <div>Click On the Piece to Proceed</div>
-      <div className="blue-glow font-light">Rook h6 seems like the right move!</div>
+      <div className="blue-glow font-light">
+        Rook h6 seems like the right move!
+      </div>
     </div>
   );
 }

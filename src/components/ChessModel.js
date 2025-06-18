@@ -6,16 +6,60 @@ import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useScrollStore } from "@/src/store";
 
-export function ChessModel({ totalPhases, ...props }) {
+/**
+ * Helper function to convert the global scroll percentage (0.0 to 1.0) into a non-linear
+ * "phase progress" that respects the custom timing defined by the transitionPoints array.
+ * @param {number} globalScrollProgress - The overall scroll percentage from the store (0.0 to 1.0).
+ * @param {number[]} transitionPoints - The array of scroll percentages that mark the completion of each phase.
+ * @returns {number} The calculated non-linear phase progress (e.g., 2.5 means halfway between phase 2 and 3).
+ */
+const getNonLinearPhaseProgress = (globalScrollProgress, transitionPoints) => {
+  // Return a fallback if points aren't ready or are invalid.
+  if (!transitionPoints || transitionPoints.length < 2) {
+    return 0;
+  }
+
+  // Handle edge cases for the start and end of the scroll.
+  if (globalScrollProgress <= 0) return 0;
+  if (globalScrollProgress >= 1) return transitionPoints.length - 1;
+
+  // Find the current segment the scroll progress falls into.
+  // We are looking for the index `i` where transitionPoints[i] <= progress < transitionPoints[i+1].
+  let currentIndex = 0;
+  for (let i = 0; i < transitionPoints.length - 1; i++) {
+    if (globalScrollProgress < transitionPoints[i + 1]) {
+      currentIndex = i;
+      break;
+    }
+  }
+  // A safeguard for when scroll is exactly 1.0
+  if (globalScrollProgress >= 1.0) {
+    currentIndex = transitionPoints.length - 2;
+  }
+
+  // Normalize the progress within this specific segment to a 0.0-1.0 range.
+  const segmentStartProgress = transitionPoints[currentIndex];
+  const segmentEndProgress = transitionPoints[currentIndex + 1];
+  const segmentDuration = segmentEndProgress - segmentStartProgress;
+
+  const localProgress =
+    segmentDuration > 0
+      ? (globalScrollProgress - segmentStartProgress) / segmentDuration
+      : 0;
+
+  // The final result is the current phase index plus the normalized progress within that phase.
+  return currentIndex + localProgress;
+};
+
+export function ChessModel({ totalPhases, transitionPoints, ...props }) {
   const { scene } = useGLTF("/models/chess.glb");
   const scrollPercentage = useScrollStore((state) => state.scrollPercentage);
 
   const initialPositions = useRef({});
-  const animatedObjects = useRef({}); // ✅ OPTIMIZATION: Ref for cached object references
+  const animatedObjects = useRef({});
   const isInitialized = useRef(false);
   const unit = 2 * 3.2;
 
-  // ✅ FULL, UNABRIDGED ANIMATION TABLE
   const animationTable = [
     {
       phase: { from: 2, to: 3 },
@@ -254,8 +298,8 @@ export function ChessModel({ totalPhases, ...props }) {
     },
   ];
 
-  const applyAnimations = (scrollProgress) => {
-    const phaseProgress = scrollProgress * totalPhases;
+  const applyAnimations = (phaseProgress) => {
+    // This function now directly receives the calculated non-linear phase progress.
     const currentPhaseIndex = Math.floor(phaseProgress);
     const finalOffsets = {};
 
@@ -318,7 +362,7 @@ export function ChessModel({ totalPhases, ...props }) {
 
     Object.keys(finalOffsets).forEach((key) => {
       const [objectName, propertyPath] = key.split(/-(.*)/s);
-      const obj = animatedObjects.current[objectName]; // ✅ FAST: Use cached object
+      const obj = animatedObjects.current[objectName];
       if (!obj) return;
 
       const { value, isVisible } = finalOffsets[key];
@@ -342,15 +386,24 @@ export function ChessModel({ totalPhases, ...props }) {
   };
 
   useFrame(() => {
-    if (!isInitialized.current || !totalPhases) return;
-    const scrollProgress = scrollPercentage / 100;
-    applyAnimations(scrollProgress);
+    // Check for all required data before running animations.
+    if (!isInitialized.current || !totalPhases || !transitionPoints) return;
+
+    const globalScrollProgress = scrollPercentage / 100;
+
+    // Use the helper to translate global scroll progress into non-linear phase progress.
+    const nonLinearPhaseProgress = getNonLinearPhaseProgress(
+      globalScrollProgress,
+      transitionPoints
+    );
+
+    // Feed the correctly calculated phase progress directly into the animation engine.
+    applyAnimations(nonLinearPhaseProgress);
   });
 
   useLayoutEffect(() => {
     if (isInitialized.current || !scene.children.length) return;
 
-    // ✅ FULL, UNABRIDGED SETUP LOGIC
     const move = (name, x = 0, y = 0, z = 0) => {
       const obj = scene.getObjectByName(name);
       if (obj) {
@@ -395,7 +448,6 @@ export function ChessModel({ totalPhases, ...props }) {
     move("Plane001", 4 * unit - 0.1, 0, -1 * unit);
     move("Plane002", 2 * unit, 0, 0);
 
-    // ✅ OPTIMIZATION: Cache all object references ONCE
     const allAnimatedObjectNames = [
       ...new Set(
         animationTable.flatMap((phase) =>

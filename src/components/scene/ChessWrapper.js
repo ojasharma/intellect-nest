@@ -5,6 +5,8 @@ import { useFrame } from "@react-three/fiber";
 import { ChessModel } from "../ChessModel";
 import { useScrollStore } from "@/src/store";
 
+// It's good practice to define constants like this outside the component
+// to prevent them from being redeclared on every render.
 const phases = [
   { x: 0, y: -6, z: 0, rotY: -2 * Math.PI, rotX: 0 },
   { x: 0, y: 0, z: 0, rotY: -Math.PI, rotX: 0 },
@@ -16,9 +18,43 @@ const phases = [
   { x: -3, y: -0.7, z: 0, rotY: 0.8 * Math.PI, rotX: 0 },
   { x: -3, y: 0.7, z: 0, rotY: 0.8 * Math.PI, rotX: 0 },
   { x: 0, y: 0, z: 0, rotY: 1 * Math.PI, rotX: 0 },
-  { x: 0, y: 0, z: 0, rotY: 1 * Math.PI, rotX: 0 },
   { x: 0, y: 0, z: 0, rotY: 1 * Math.PI, rotX: -Math.PI / 3.8 },
+  { x: 3, y: -1, z: 3, rotY: 1 * Math.PI, rotX: -Math.PI / 3.8 },
 ];
+
+// --- NEW LOGIC: Defining the scroll pacing ---
+
+// This function generates an array of scroll percentages (0.0 to 1.0)
+// that mark the end of each transition.
+const createTransitionPoints = () => {
+  const points = [0]; // The animation starts at 0% scroll
+
+  // Allocate 30% of the total scroll duration to the first transition.
+  const firstTransitionDuration = 0.3; // 30%
+  points.push(firstTransitionDuration);
+
+  // The remaining scroll progress to be distributed among the other transitions.
+  const remainingProgress = 1.0 - firstTransitionDuration;
+  const numRemainingTransitions = phases.length - 2; // (total phases - 1) - first transition
+
+  if (numRemainingTransitions > 0) {
+    const subsequentTransitionDuration =
+      remainingProgress / numRemainingTransitions;
+    for (let i = 1; i < phases.length - 1; i++) {
+      points.push(points[i] + subsequentTransitionDuration);
+    }
+  }
+
+  // Ensure the last point is exactly 1.0 to avoid floating point inaccuracies.
+  points[points.length - 1] = 1.0;
+
+  return points;
+};
+
+const transitionPoints = createTransitionPoints();
+// This will generate an array like: [0, 0.3, 0.37, 0.44, 0.51, ...]
+
+// --- END OF NEW LOGIC ---
 
 export default function ChessWrapper({ scrollToPercent, totalPhases }) {
   const groupRef = useRef();
@@ -26,52 +62,57 @@ export default function ChessWrapper({ scrollToPercent, totalPhases }) {
 
   const handlePointerClick = useCallback(
     (event) => {
+      // ... (This function remains unchanged)
       event.stopPropagation();
       const currentScroll = useScrollStore.getState().scrollPercentage;
       const phaseUnit = 100 / totalPhases;
 
-      if (currentScroll >= phaseUnit * 0.9 && currentScroll < phaseUnit * 2) {
-        scrollToPercent(phaseUnit * 3.01, 2000);
-      } else if (
-        currentScroll >= phaseUnit * 2.9 &&
-        currentScroll < phaseUnit * 4
-      ) {
-        scrollToPercent(phaseUnit * 5.1, 2000);
-      } else if (
-        currentScroll >= phaseUnit * 4.9 &&
-        currentScroll < phaseUnit * 6
-      ) {
-        scrollToPercent(phaseUnit * 7.1, 2000);
-      } else if (
-        currentScroll >= phaseUnit * 6.9 &&
-        currentScroll < phaseUnit * 8
-      ) {
-        scrollToPercent(phaseUnit * 9.1, 2000);
-      } else if (
-        currentScroll >= phaseUnit * 8.9 &&
-        currentScroll < phaseUnit * 10
-      ) {
-        scrollToPercent(phaseUnit * 11, 2000);
-      } else if (
-        currentScroll < phaseUnit * 1
-      ) {
-        scrollToPercent(phaseUnit * 1, 2000);
+      if ( currentScroll < 25) {
+        scrollToPercent(30, 2000);
+      } else if (currentScroll >= 25 && currentScroll < 37) {
+        scrollToPercent(44, 2000);
+      } else if (currentScroll >= 40 && currentScroll < 51) {
+        scrollToPercent(58, 2000);
+      } else if (currentScroll >= 55 && currentScroll < 65) {
+        scrollToPercent(72, 2000);
+      } else if (currentScroll >= 69 && currentScroll < 79) {
+        scrollToPercent(86, 2000);
+      } else if (currentScroll >= 82 && currentScroll < 100) {
+        scrollToPercent(100, 2000);
       }
-      
-      
     },
     [scrollToPercent, totalPhases]
   );
 
+  // --- UPDATED getCurrentTransform FUNCTION ---
   const getCurrentTransform = (progress) => {
+    // Handle edge cases
+    if (progress <= 0) return phases[0];
     if (progress >= 1) return phases[phases.length - 1];
-    const totalTransitions = phases.length - 1;
-    const phaseProgress = progress * totalTransitions;
-    const currentIndex = Math.floor(phaseProgress);
-    if (currentIndex >= totalTransitions) return phases[totalTransitions];
-    const localProgress = phaseProgress - currentIndex;
+
+    // 1. Find the current segment the progress falls into.
+    // We are looking for the index `i` where transitionPoints[i] <= progress < transitionPoints[i+1]
+    let currentIndex = 0;
+    for (let i = 0; i < transitionPoints.length - 1; i++) {
+      if (progress < transitionPoints[i + 1]) {
+        currentIndex = i;
+        break;
+      }
+    }
+
+    // 2. Get the start and end phases for this segment
     const from = phases[currentIndex];
     const to = phases[currentIndex + 1];
+
+    // 3. Normalize the progress within this segment
+    const segmentStartProgress = transitionPoints[currentIndex];
+    const segmentEndProgress = transitionPoints[currentIndex + 1];
+    const segmentDuration = segmentEndProgress - segmentStartProgress;
+
+    // This is the key: calculate how far we are *inside* the current segment (0.0 to 1.0)
+    const localProgress = (progress - segmentStartProgress) / segmentDuration;
+
+    // 4. Interpolate based on the normalized local progress
     return {
       x: from.x + (to.x - from.x) * localProgress,
       y: from.y + (to.y - from.y) * localProgress,
@@ -101,7 +142,10 @@ export default function ChessWrapper({ scrollToPercent, totalPhases }) {
         <planeGeometry args={[100, 100]} />
         <meshBasicMaterial />
       </mesh>
-      <ChessModel totalPhases={totalPhases} />
+      <ChessModel
+        totalPhases={totalPhases}
+        transitionPoints={transitionPoints}
+      />
     </group>
   );
 }

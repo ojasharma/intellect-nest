@@ -18,9 +18,9 @@ const CONSTANTS = {
   VH_PER_PHASE: 66.66,
   FEATURE_SCALE: 1.6,
   FEATURE_WIDTH: 710,
-  FEATURE_POSITION: 503, // 300vh from top
+  FEATURE_POSITION: 228, // 300vh from top
 };
-const PAGE_HEIGHT_VH = CONSTANTS.TOTAL_PHASES * CONSTANTS.VH_PER_PHASE * 3;
+const PAGE_HEIGHT_VH = CONSTANTS.TOTAL_PHASES * CONSTANTS.VH_PER_PHASE ;
 
 // Feature data
 const features = [
@@ -130,6 +130,7 @@ const useTypewriter = (text, speed = 50) => {
   const [displayText, setDisplayText] = useState("");
 
   useEffect(() => {
+    if (!text) return;
     let i = 0;
     const typingInterval = setInterval(() => {
       if (i < text.length) {
@@ -166,7 +167,7 @@ const StatsSection = ({ stats, isVisible }) => {
     <div
       className={`absolute grid grid-cols-2 gap-5 text-white z-[3]`}
       style={{
-        top: "940vh",
+        top: "345vh",
         right: "6vw",
         width: "550px",
         fontFamily: "Poppins",
@@ -175,15 +176,9 @@ const StatsSection = ({ stats, isVisible }) => {
       {stats.map((stat, idx) => (
         <div
           key={idx}
-          className={`group flex flex-col items-center justify-center text-center p-6 liquid-glass-box ${
-            isVisible ? "fade-in" : "fade-out"
-          }`}
+          className={`group flex flex-col items-center justify-center text-center p-6 liquid-glass-box`}
           style={{
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? "translateX(0)" : "translateX(20px)",
-            transition:
-              "opacity 0.7s ease, transform 0.7s ease, backdrop-filter 0.5s ease",
-            transitionDelay: `${idx * 100}ms`,
+            transition: "backdrop-filter 0.5s ease",
             background:
               "linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)",
             backdropFilter: "blur(16px) saturate(180%)",
@@ -241,11 +236,9 @@ const InstructorsSection = ({ instructors, isVisible }) => {
 
   return (
     <div
-      className={`absolute flex flex-col items-center text-white z-[3] transition-opacity duration-1000 ${
-        isVisible ? "opacity-100" : "opacity-0"
-      }`}
+      className={`absolute flex flex-col items-center text-white z-[3]`}
       style={{
-        top: "1330vh",
+        top: "440vh",
         left: "30%",
         transform: "translateX(-50%)",
         fontFamily: "Poppins",
@@ -319,40 +312,23 @@ export default function HomePage() {
     rookMoveFade: "fade-out",
     pawnMoveFade: "fade-out",
     finalMoveFade: "fade-out",
-    feature1Fade: "fade-out",
-    feature2Fade: "fade-out",
-    feature3Fade: "fade-out",
-    statsFade: "fade-out",
-    instructorsFade: "fade-out",
+    isStatsVisible: false,
+    isInstructorsVisible: false,
   });
 
   const lastKnownPhaseRef = useRef(0);
   const lastKnownScrollPercentageRef = useRef(0);
-  const featureTimeoutsRef = useRef([]);
 
   useEffect(() => {
     const unsubscribe = useScrollStore.subscribe((state) => {
       const scrollPercentage = state.scrollPercentage;
       const phaseUnit = 100 / CONSTANTS.TOTAL_PHASES;
 
-      const phase3StartPercentage = phaseUnit * 2.5;
-      const phase4StartPercentage = phaseUnit * 4;
-      const isInPhase3ScrollRange =
-        scrollPercentage >= phase3StartPercentage &&
-        scrollPercentage < phase4StartPercentage;
-
-      const wasInPhase3ScrollRange =
-        lastKnownScrollPercentageRef.current >= phase3StartPercentage &&
-        lastKnownScrollPercentageRef.current < phase4StartPercentage;
-
       let currentPhase = 0;
       if (scrollPercentage > 5) currentPhase = 1;
       if (scrollPercentage >= phaseUnit * 1) currentPhase = 1.5;
       if (scrollPercentage >= phaseUnit * 2) currentPhase = 2;
       if (scrollPercentage >= phaseUnit * 3) currentPhase = 3;
-      if (scrollPercentage >= phaseUnit * 3 + phaseUnit / 3) currentPhase = 3.1;
-      if (scrollPercentage >= phaseUnit * 3 + (phaseUnit / 3) * 2)
-        currentPhase = 3.2;
       if (scrollPercentage >= phaseUnit * 4) currentPhase = 4;
       if (scrollPercentage >= phaseUnit * 5) currentPhase = 5;
       if (scrollPercentage >= phaseUnit * 6) currentPhase = 6;
@@ -362,55 +338,21 @@ export default function HomePage() {
       if (scrollPercentage >= phaseUnit * 10) currentPhase = 10;
 
       const generalPhaseChanged = currentPhase !== lastKnownPhaseRef.current;
-      const featurePhaseStatusChanged =
-        isInPhase3ScrollRange !== wasInPhase3ScrollRange;
-
-      if (generalPhaseChanged || featurePhaseStatusChanged) {
+      
+      if (generalPhaseChanged) {
         setUiState((prevState) => {
-          let newFeature1Fade = prevState.feature1Fade;
-          let newFeature2Fade = prevState.feature2Fade;
-          let newFeature3Fade = prevState.feature3Fade;
-
-          featureTimeoutsRef.current.forEach(clearTimeout);
-          featureTimeoutsRef.current = [];
-
-          if (isInPhase3ScrollRange) {
-            if (!wasInPhase3ScrollRange) {
-              newFeature1Fade = "fade-out";
-              newFeature2Fade = "fade-out";
-              newFeature3Fade = "fade-out";
-
-              const t1 = setTimeout(() => {
-                setUiState((s) => ({ ...s, feature1Fade: "fade-in" }));
-              }, 0);
-              const t2 = setTimeout(() => {
-                setUiState((s) => ({ ...s, feature2Fade: "fade-in" }));
-              }, 400);
-              const t3 = setTimeout(() => {
-                setUiState((s) => ({ ...s, feature3Fade: "fade-in" }));
-              }, 500);
-              featureTimeoutsRef.current.push(t1, t2, t3);
-            }
-          } else {
-            newFeature1Fade = "fade-out";
-            newFeature2Fade = "fade-out";
-            newFeature3Fade = "fade-out";
-          }
-
           return {
             ...prevState,
             instructionalFade:
-              scrollPercentage >= phaseUnit * 1 - phaseUnit * 0.1 &&
-              scrollPercentage < phaseUnit * 2
+              scrollPercentage >= phaseUnit * 1 &&
+              scrollPercentage < phaseUnit * 4
                 ? "fade-in"
                 : "fade-out",
             scrollIndicatorFade: scrollPercentage > 5 ? "fade-out" : "fade-in",
-            greatMoveFade: isInPhase3ScrollRange ? "fade-in" : "fade-out",
+            greatMoveFade:
+              currentPhase >= 4 && currentPhase <= 4.7 ? "fade-in" : "fade-out",
             rookMoveFade:
-              scrollPercentage >= phaseUnit * 5 &&
-              scrollPercentage < phaseUnit * 6
-                ? "fade-in"
-                : "fade-out",
+              currentPhase >= 5.6 && currentPhase <= 6 ? "fade-in" : "fade-out",
             pawnMoveFade:
               scrollPercentage >= phaseUnit * 7 &&
               scrollPercentage < phaseUnit * 8
@@ -421,14 +363,8 @@ export default function HomePage() {
               scrollPercentage < phaseUnit * 10
                 ? "fade-in"
                 : "fade-out",
-            feature1Fade: newFeature1Fade,
-            feature2Fade: newFeature2Fade,
-            feature3Fade: newFeature3Fade,
-            statsFade: currentPhase >= 5 ? "fade-in" : "fade-out",
-            instructorsFade:
-              scrollPercentage >= (1320 / PAGE_HEIGHT_VH) * 100
-                ? "fade-in"
-                : "fade-out",
+            isStatsVisible: currentPhase >= 5,
+            isInstructorsVisible: scrollPercentage >= 62,
           };
         });
       }
@@ -439,7 +375,6 @@ export default function HomePage() {
 
     return () => {
       unsubscribe();
-      featureTimeoutsRef.current.forEach(clearTimeout);
     };
   }, []);
 
@@ -505,7 +440,7 @@ export default function HomePage() {
           alt="Bluenoise background"
           layout="fill"
           objectFit="cover"
-          className="fixed top-0 left-0 pointer-events-none select-none z-0 opacity-20"
+          className="fixed bottom-[-180] left-0 pointer-events-none select-none z-0 opacity-20"
         />
 
         <InstructionalText fadeClass={uiState.instructionalFade} />
@@ -587,7 +522,7 @@ export default function HomePage() {
           className={`fixed z-30 select-none text-white text-center ${uiState.finalMoveFade}`}
           style={{
             top: "5%",
-            left: "34%",
+            left: "33%",
             fontFamily: "Poppins",
             fontSize: "1.5vw",
             lineHeight: 1.2,
@@ -595,16 +530,76 @@ export default function HomePage() {
           }}
         >
           <div className="font-light">
-            And for your final move...
+            So are you ready
             <br />
-            <span className="font-light">Rook g4 to finish the job,</span>
-            <br />
-            <span className="font-thin">
-              forcing a checkmate and winning the game
+            <span className="font-light">
+              For the Next Gen Chess Training For your kids?
             </span>
+            <br />
+            <span className="font-thin">Rook g4 to finish the game.</span>
           </div>
-        </div>
 
+          {/* Liquid Glass Button matching feature section styling */}
+          <button
+            className="mt-8 px-10 py-4 rounded-2xl transition-all duration-500 group relative overflow-hidden"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)",
+              backdropFilter: "blur(16px) saturate(180%)",
+              WebkitBackdropFilter: "blur(16px) saturate(180%)",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              borderRadius: "24px",
+              boxShadow:
+                "0 8px 32px rgba(0, 27, 74, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(255, 255, 255, 0.1)",
+              color: "white",
+              fontSize: "1.2rem",
+              fontWeight: "500",
+            }}
+          >
+            <span className="relative z-10 group-hover:text-shadow-glow">
+              Join Now
+            </span>
+
+            {/* Shimmer effect */}
+            <div
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{
+                background:
+                  "linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%)",
+                transform: "translateX(-100%)",
+                animation: "shimmer 2s infinite",
+              }}
+            />
+
+            {/* Floating particles like in features */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
+              <div
+                className="absolute w-1 h-1 bg-white rounded-full"
+                style={{
+                  top: "20%",
+                  left: "15%",
+                  animation: "float 3s ease-in-out infinite",
+                }}
+              />
+              <div
+                className="absolute w-0.5 h-0.5 bg-blue-300 rounded-full"
+                style={{
+                  top: "60%",
+                  right: "25%",
+                  animation: "float 4s ease-in-out infinite reverse",
+                }}
+              />
+              <div
+                className="absolute w-0.5 h-0.5 bg-white rounded-full"
+                style={{
+                  bottom: "30%",
+                  left: "70%",
+                  animation: "float 3.5s ease-in-out infinite",
+                }}
+              />
+            </div>
+          </button>
+        </div>
         <Scene
           scrollToPercent={scrollToPercent}
           totalPhases={CONSTANTS.TOTAL_PHASES}
@@ -646,27 +641,14 @@ export default function HomePage() {
           </div>
 
           {features.map((feature, idx) => {
-            const iconSize = `${CONSTANTS.FEATURE_SCALE * 1}rem`;
             const textSize = `${CONSTANTS.FEATURE_SCALE * 1.5}rem`;
-            const fadeClass =
-              idx === 0
-                ? uiState.feature1Fade
-                : idx === 1
-                ? uiState.feature2Fade
-                : uiState.feature3Fade;
 
             return (
               <div
                 key={idx}
-                className={`group flex items-start gap-4 p-6 transition-all duration-700 ${fadeClass} liquid-glass-box`}
+                className={`group flex items-start gap-4 p-6 transition-all duration-400 liquid-glass-box`}
                 style={{
-                  opacity: fadeClass === "fade-in" ? 1 : 0,
-                  transform:
-                    fadeClass === "fade-in"
-                      ? "translateX(0)"
-                      : "translateX(-20px)",
-                  transition:
-                    "opacity 0.7s ease, transform 0.7s ease, backdrop-filter 0.5s ease",
+                  transition: "backdrop-filter 0.5s ease",
                   background:
                     "linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)",
                   backdropFilter: "blur(16px) saturate(180%)",
@@ -746,13 +728,10 @@ export default function HomePage() {
           })}
         </div>
 
-        <StatsSection
-          stats={stats}
-          isVisible={uiState.statsFade === "fade-in"}
-        />
+        <StatsSection stats={stats} isVisible={uiState.isStatsVisible} />
         <InstructorsSection
           instructors={instructors}
-          isVisible={uiState.instructorsFade === "fade-in"}
+          isVisible={uiState.isInstructorsVisible}
         />
       </div>
 
