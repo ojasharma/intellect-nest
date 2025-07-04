@@ -16,11 +16,47 @@ import InfiniteTape from "@/components/ui/InfiniteTape";
 const CONSTANTS = {
   TOTAL_PHASES: 11,
   VH_PER_PHASE: 66.66,
-  FEATURE_SCALE: 1.6,
-  FEATURE_WIDTH: 710,
   FEATURE_POSITION: 228, // 300vh from top
+  BASELINE_WIDTH: 1496, // Reference width where current sizing is perfect
 };
-const PAGE_HEIGHT_VH = CONSTANTS.TOTAL_PHASES * CONSTANTS.VH_PER_PHASE ;
+
+// Function to calculate responsive values based on viewport width
+const getResponsiveValues = () => {
+  const viewportWidth =
+    typeof window !== "undefined" ? window.innerWidth : 1496;
+  const scaleFactor = viewportWidth / CONSTANTS.BASELINE_WIDTH;
+
+  return {
+    featureScale: 1.6 * scaleFactor,
+    featureWidth: 710 * scaleFactor,
+    featureGap: 24 * scaleFactor, // 1.5rem = 24px
+    featurePadding: 24 * scaleFactor, // 1.5rem = 24px
+    featureIconSize: 64 * scaleFactor, // 4rem = 64px
+    featureBorderRadius: 24 * scaleFactor,
+    featureTextSize: 1.5 * scaleFactor, // rem multiplier
+    featureMarginTop: 16 * scaleFactor, // 1rem = 16px
+    // Stats section responsive values
+    statsWidth: 550 * scaleFactor,
+    statsGap: 20 * scaleFactor, // 1.25rem = 20px
+    statsPadding: 24 * scaleFactor, // 1.5rem = 24px
+    statsHeight: 220 * scaleFactor,
+    statsIconSize: 40 * scaleFactor, // 2.5rem = 40px
+    statsNumberSize: 2.8 * scaleFactor, // rem multiplier
+    statsTextSize: 1 * scaleFactor, // rem multiplier
+    statsBorderRadius: 24 * scaleFactor,
+    // Instructor section responsive values
+    instructorCardWidth: 300 * scaleFactor,
+    instructorGap: 48 * scaleFactor, // 3rem = 48px
+    instructorPadding: 32 * scaleFactor, // 2rem = 32px
+    instructorImageSize: 160 * scaleFactor, // 10rem = 160px
+    instructorNameSize: 1.5 * scaleFactor, // rem multiplier
+    instructorRatingSize: 1.125 * scaleFactor, // rem multiplier
+    instructorHeadingSize: 3 * scaleFactor, // rem multiplier
+    instructorBorderRadius: 24 * scaleFactor,
+  };
+};
+
+const PAGE_HEIGHT_VH = CONSTANTS.TOTAL_PHASES * CONSTANTS.VH_PER_PHASE;
 
 // Feature data
 const features = [
@@ -149,6 +185,24 @@ const useTypewriter = (text, speed = 50) => {
   return displayText;
 };
 
+// Custom hook for responsive values
+const useResponsiveValues = () => {
+  const [responsiveValues, setResponsiveValues] = useState(() =>
+    getResponsiveValues()
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setResponsiveValues(getResponsiveValues());
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return responsiveValues;
+};
+
 // *** FIX 1: Create a new component for the count-up number ***
 const StatCounter = ({ endValue }) => {
   const count = useCountUp(endValue);
@@ -161,35 +215,39 @@ const Typewriter = ({ text, speed }) => {
   return <>{displayText}</>;
 };
 
-// Stats Component
+// Stats Component - Now with responsive sizing
 const StatsSection = ({ stats, isVisible }) => {
+  const responsiveValues = useResponsiveValues();
+
   return (
     <div
-      className={`absolute grid grid-cols-2 gap-5 text-white z-[3]`}
+      className={`absolute grid grid-cols-2 text-white z-[3]`}
       style={{
         top: "345vh",
         right: "6vw",
-        width: "550px",
+        width: `${responsiveValues.statsWidth}px`,
+        gap: `${responsiveValues.statsGap}px`,
         fontFamily: "Poppins",
       }}
     >
       {stats.map((stat, idx) => (
         <div
           key={idx}
-          className={`group flex flex-col items-center justify-center text-center p-6 liquid-glass-box`}
+          className={`group flex flex-col items-center justify-center text-center liquid-glass-box`}
           style={{
+            padding: `${responsiveValues.statsPadding}px`,
+            height: `${responsiveValues.statsHeight}px`,
             transition: "backdrop-filter 0.5s ease",
             background:
               "linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)",
             backdropFilter: "blur(16px) saturate(180%)",
             WebkitBackdropFilter: "blur(16px) saturate(180%)",
             border: "1px solid rgba(255, 255, 255, 0.15)",
-            borderRadius: "24px",
+            borderRadius: `${responsiveValues.statsBorderRadius}px`,
             boxShadow:
               "0 8px 32px rgba(0, 27, 74, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(255, 255, 255, 0.1)",
             position: "relative",
             overflow: "hidden",
-            height: "220px",
           }}
         >
           <div
@@ -201,12 +259,11 @@ const StatsSection = ({ stats, isVisible }) => {
               animation: "shimmer 2s infinite",
             }}
           />
-          {/* *** FIX 3: Use Next.js Image component *** */}
           <Image
             src={stat.img}
             alt={stat.alt}
-            width={40}
-            height={40}
+            width={responsiveValues.statsIconSize}
+            height={responsiveValues.statsIconSize}
             className="transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-lg relative z-10 mb-2"
             style={{
               filter:
@@ -214,12 +271,23 @@ const StatsSection = ({ stats, isVisible }) => {
             }}
           />
           <p className="font-poppins leading-tight text-white relative z-10 transition-all duration-500 group-hover:text-shadow-glow">
-            <span className="font-extrabold text-[2.8rem]">
-              {/* Render the new StatCounter component conditionally */}
+            <span
+              className="font-extrabold"
+              style={{
+                fontSize: `${responsiveValues.statsNumberSize}rem`,
+              }}
+            >
               {isVisible && <StatCounter endValue={stat.value} />}
             </span>
             <br />
-            <span className="font-light text-base mt-1 block">{stat.text}</span>
+            <span
+              className="font-light mt-1 block"
+              style={{
+                fontSize: `${responsiveValues.statsTextSize}rem`,
+              }}
+            >
+              {stat.text}
+            </span>
           </p>
         </div>
       ))}
@@ -227,8 +295,9 @@ const StatsSection = ({ stats, isVisible }) => {
   );
 };
 
-// Instructors Component
+// Instructors Component - Now with responsive sizing
 const InstructorsSection = ({ instructors, isVisible }) => {
+  const responsiveValues = useResponsiveValues();
   const headingText = useTypewriter(
     "Meet Our Instructors",
     isVisible ? 50 : 9999
@@ -243,42 +312,64 @@ const InstructorsSection = ({ instructors, isVisible }) => {
         transform: "translateX(-50%)",
         fontFamily: "Poppins",
         width: "100%",
-        padding: "2rem",
+        padding: `${responsiveValues.instructorPadding}px`,
       }}
     >
-      <h2 className="text-4xl md:text-5xl font-bold mb-16 h-14 font-poppins text-center">
+      <h2
+        className="font-bold mb-16 h-14 font-poppins text-center"
+        style={{
+          fontSize: `${responsiveValues.instructorHeadingSize}rem`,
+        }}
+      >
         {headingText}
       </h2>
-      <div className="flex flex-col md:flex-row gap-12 justify-center w-full max-w-4xl">
+      <div
+        className="flex flex-col md:flex-row justify-center w-full max-w-4xl"
+        style={{
+          gap: `${responsiveValues.instructorGap}px`,
+        }}
+      >
         {instructors.map((instructor, idx) => (
           <div
             key={idx}
-            className="group flex flex-col items-center gap-4 p-8 transition-all duration-500 liquid-glass-box"
+            className="group flex flex-col items-center gap-4 transition-all duration-500 liquid-glass-box"
             style={{
+              padding: `${responsiveValues.instructorPadding}px`,
+              width: `${responsiveValues.instructorCardWidth}px`,
               background:
                 "linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 100%)",
               backdropFilter: "blur(12px) saturate(150%)",
               WebkitBackdropFilter: "blur(12px) saturate(150%)",
               border: "1px solid rgba(255, 255, 255, 0.12)",
-              borderRadius: "24px",
+              borderRadius: `${responsiveValues.instructorBorderRadius}px`,
               boxShadow: "0 8px 32px rgba(0, 20, 50, 0.3)",
-              width: "300px",
             }}
           >
-            {/* *** FIX 3: Use Next.js Image component *** */}
             <Image
               src={instructor.pfp}
               alt={instructor.alt}
-              width={160}
-              height={160}
-              className="w-40 h-40 rounded-full object-cover border-4 border-transparent group-hover:border-blue-400 transition-all duration-300 shadow-lg"
+              width={responsiveValues.instructorImageSize}
+              height={responsiveValues.instructorImageSize}
+              className="rounded-full object-cover border-4 border-transparent group-hover:border-blue-400 transition-all duration-300 shadow-lg"
+              style={{
+                width: `${responsiveValues.instructorImageSize}px`,
+                height: `${responsiveValues.instructorImageSize}px`,
+              }}
             />
-            <h3 className="text-2xl font-semibold mt-4 h-8">
-              {/* Render the new Typewriter component conditionally */}
+            <h3
+              className="font-semibold mt-4 h-8"
+              style={{
+                fontSize: `${responsiveValues.instructorNameSize}rem`,
+              }}
+            >
               {isVisible && <Typewriter text={instructor.name} speed={70} />}
             </h3>
-            <p className="text-lg font-light text-blue-300 h-7">
-              {/* Render the new Typewriter component conditionally */}
+            <p
+              className="font-light text-blue-300 h-7"
+              style={{
+                fontSize: `${responsiveValues.instructorRatingSize}rem`,
+              }}
+            >
               {isVisible && <Typewriter text={instructor.rating} speed={70} />}
             </p>
           </div>
@@ -296,6 +387,118 @@ const InstructorsSection = ({ instructors, isVisible }) => {
           );
         }
       `}</style>
+    </div>
+  );
+};
+
+// Responsive Feature Section Component
+const ResponsiveFeatureSection = ({ features }) => {
+  const responsiveValues = useResponsiveValues();
+
+  return (
+    <div
+      className="absolute flex flex-col text-left z-[2]"
+      style={{
+        top: `${CONSTANTS.FEATURE_POSITION}vh`,
+        left: "6vw",
+        width: `${responsiveValues.featureWidth}px`,
+        gap: `${responsiveValues.featureGap}px`,
+      }}
+    >
+      <div
+        className="text-white font-normal mb-0"
+        style={{
+          fontSize: `${responsiveValues.featureTextSize * 1.2}rem`,
+        }}
+      >
+        Our Features:
+      </div>
+
+      {features.map((feature, idx) => {
+        return (
+          <div
+            key={idx}
+            className={`group flex items-start transition-all duration-400 liquid-glass-box`}
+            style={{
+              gap: `${responsiveValues.featureGap * 0.67}px`, // 16px equivalent
+              padding: `${responsiveValues.featurePadding}px`,
+              transition: "backdrop-filter 0.5s ease",
+              background:
+                "linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)",
+              backdropFilter: "blur(16px) saturate(180%)",
+              WebkitBackdropFilter: "blur(16px) saturate(180%)",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              borderRadius: `${responsiveValues.featureBorderRadius}px`,
+              boxShadow: `
+                0 8px 32px rgba(0, 27, 74, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.1)
+              `,
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{
+                background:
+                  "linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%)",
+                transform: "translateX(-100%)",
+                animation: "shimmer 2s infinite",
+              }}
+            />
+
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
+              <div
+                className="absolute w-1 h-1 bg-white rounded-full"
+                style={{
+                  top: "20%",
+                  left: "15%",
+                  animation: "float 3s ease-in-out infinite",
+                }}
+              />
+              <div
+                className="absolute w-0.5 h-0.5 bg-blue-300 rounded-full"
+                style={{
+                  top: "60%",
+                  right: "25%",
+                  animation: "float 4s ease-in-out infinite reverse",
+                }}
+              />
+              <div
+                className="absolute w-0.5 h-0.5 bg-white rounded-full"
+                style={{
+                  bottom: "30%",
+                  left: "70%",
+                  animation: "float 3.5s ease-in-out infinite",
+                }}
+              />
+            </div>
+
+            <Image
+              src={feature.img}
+              alt={feature.alt}
+              width={responsiveValues.featureIconSize}
+              height={responsiveValues.featureIconSize}
+              className="transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-lg relative z-10"
+              style={{
+                filter:
+                  "brightness(0) invert(1) drop-shadow(0 0 8px rgba(51, 187, 255, 0.6))",
+                marginTop: `${responsiveValues.featureMarginTop}px`,
+              }}
+            />
+            <p
+              className="font-poppins leading-snug text-white relative z-10 transition-all duration-500 group-hover:text-shadow-glow"
+              style={{
+                fontSize: `${responsiveValues.featureTextSize}rem`,
+                textShadow: "0 0 20px rgba(255, 255, 255, 0.3)",
+              }}
+            >
+              {feature.text}
+            </p>
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -338,7 +541,7 @@ export default function HomePage() {
       if (scrollPercentage >= phaseUnit * 10) currentPhase = 10;
 
       const generalPhaseChanged = currentPhase !== lastKnownPhaseRef.current;
-      
+
       if (generalPhaseChanged) {
         setUiState((prevState) => {
           return {
@@ -434,7 +637,6 @@ export default function HomePage() {
         onMouseLeave={() => setIsMouseIn(false)}
         onClick={handleClick}
       >
-        {/* *** FIX 3: Use Next.js Image component *** */}
         <img
           src="/bluenoise.png"
           alt="Bluenoise background"
@@ -598,11 +800,7 @@ export default function HomePage() {
           totalPhases={CONSTANTS.TOTAL_PHASES}
         />
         <UIOverlay />
-        <CustomCursor
-          mousePos={mousePos}
-          isMouseIn={isMouseIn}
-          clicked={clicked}
-        />
+        {/* <CustomCursor isMouseIn={isMouseIn} clicked={clicked} /> */}
         <ScrollIndicator scrollFadeClass={uiState.scrollIndicatorFade} />
       </main>
 
@@ -621,105 +819,7 @@ export default function HomePage() {
           <InfiniteTape />
         </div>
 
-        <div
-          className="absolute flex flex-col gap-6 text-left z-[2]"
-          style={{
-            top: `${CONSTANTS.FEATURE_POSITION}vh`,
-            left: "6vw",
-            width: `${CONSTANTS.FEATURE_WIDTH}px`,
-          }}
-        >
-          <div className="text-white font-normal text-[1.8rem] mb-0">
-            Our Features:
-          </div>
-
-          {features.map((feature, idx) => {
-            const textSize = `${CONSTANTS.FEATURE_SCALE * 1.5}rem`;
-
-            return (
-              <div
-                key={idx}
-                className={`group flex items-start gap-4 p-6 transition-all duration-400 liquid-glass-box`}
-                style={{
-                  transition: "backdrop-filter 0.5s ease",
-                  background:
-                    "linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)",
-                  backdropFilter: "blur(16px) saturate(180%)",
-                  WebkitBackdropFilter: "blur(16px) saturate(180%)",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
-                  borderRadius: "24px",
-                  boxShadow: `
-                    0 8px 32px rgba(0, 27, 74, 0.3),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                    inset 0 -1px 0 rgba(255, 255, 255, 0.1)
-                  `,
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{
-                    background:
-                      "linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%)",
-                    transform: "translateX(-100%)",
-                    animation: "shimmer 2s infinite",
-                  }}
-                />
-
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
-                  <div
-                    className="absolute w-1 h-1 bg-white rounded-full"
-                    style={{
-                      top: "20%",
-                      left: "15%",
-                      animation: "float 3s ease-in-out infinite",
-                    }}
-                  />
-                  <div
-                    className="absolute w-0.5 h-0.5 bg-blue-300 rounded-full"
-                    style={{
-                      top: "60%",
-                      right: "25%",
-                      animation: "float 4s ease-in-out infinite reverse",
-                    }}
-                  />
-                  <div
-                    className="absolute w-0.5 h-0.5 bg-white rounded-full"
-                    style={{
-                      bottom: "30%",
-                      left: "70%",
-                      animation: "float 3.5s ease-in-out infinite",
-                    }}
-                  />
-                </div>
-
-                {/* *** FIX 3: Use Next.js Image component *** */}
-                <Image
-                  src={feature.img}
-                  alt={feature.alt}
-                  width={CONSTANTS.FEATURE_SCALE * 16}
-                  height={CONSTANTS.FEATURE_SCALE * 16}
-                  className="transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-lg relative z-10"
-                  style={{
-                    filter:
-                      "brightness(0) invert(1) drop-shadow(0 0 8px rgba(51, 187, 255, 0.6))",
-                    marginTop: "1rem",
-                  }}
-                />
-                <p
-                  className="font-poppins leading-snug text-white relative z-10 transition-all duration-500 group-hover:text-shadow-glow"
-                  style={{
-                    fontSize: textSize,
-                    textShadow: "0 0 20px rgba(255, 255, 255, 0.3)",
-                  }}
-                >
-                  {feature.text}
-                </p>
-              </div>
-            );
-          })}
-        </div>
+        <ResponsiveFeatureSection features={features} />
 
         <StatsSection stats={stats} isVisible={uiState.isStatsVisible} />
         <InstructorsSection
