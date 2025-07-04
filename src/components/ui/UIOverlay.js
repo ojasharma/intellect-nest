@@ -14,7 +14,7 @@ export default function UIOverlay() {
       <div className="flex-grow flex flex-col items-center justify-start">
         <AnimatedText />
         <p className="text-white font-poppins text-center mt-4 text-xl">
-          We bring world-class chess training to your kids in a way that is truly
+          World-class chess training academy for your kids in a way that is truly
           affordable
         </p>
       </div>
