@@ -1,17 +1,24 @@
 "use client";
 
 import React from "react";
-import ReviewCard from "@/components/ui/ReviewCard"; // Assuming this component exists
+import ReviewCard from "@/components/ui/ReviewCard";
+import { useResponsiveValues } from "@/src/hooks/useResponsiveValues";
 
 export default function ReviewsSection() {
+  const responsiveValues = useResponsiveValues();
+
+  const cardGap = responsiveValues.reviewCardGapVH;
+  const leftOffset = responsiveValues.reviewCardLeft;
+  const rightOffset = responsiveValues.reviewCardRight;
+
   return (
     <>
       {/* Review Card 1 */}
       <div
         className="absolute z-[3]"
         style={{
-          top: "0vh",
-          left: "20%",
+          top: `${0 * cardGap}vh`,
+          left: `${leftOffset}%`,
           transform: "translateX(-50%)",
         }}
       >
@@ -27,8 +34,8 @@ export default function ReviewsSection() {
       <div
         className="absolute z-[3]"
         style={{
-          top: "60vh",
-          right: "20%",
+          top: `${1 * cardGap}vh`,
+          right: `${rightOffset}%`,
           transform: "translateX(50%)",
         }}
       >
@@ -44,8 +51,8 @@ export default function ReviewsSection() {
       <div
         className="absolute z-[3]"
         style={{
-          top: "120vh",
-          left: "20%",
+          top: `${2 * cardGap}vh`,
+          left: `${leftOffset}%`,
           transform: "translateX(-50%)",
         }}
       >

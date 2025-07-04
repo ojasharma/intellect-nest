@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { getResponsiveValues } from "@/src/lib/constants";
 
-// Custom hook for responsive values
+// Custom hook to recalculate values on resize
 export const useResponsiveValues = () => {
   const [responsiveValues, setResponsiveValues] = useState(() =>
     getResponsiveValues()
@@ -20,3 +20,4 @@ export const useResponsiveValues = () => {
 
   return responsiveValues;
 };
+
