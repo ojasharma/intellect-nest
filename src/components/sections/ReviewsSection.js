@@ -26,7 +26,9 @@ export default function ReviewsSection() {
           rating={5}
           reviewerName="Radhika Menon"
           reviewerRole="Mother of Aarav, Age 7"
-          reviewText="Absolutely love this academy! Aarav has become more focused and confident since he started learning chess here. The coaches are kind, patient, and make every class fun. He looks forward to every session!"
+          reviewText={
+            "Absolutely love this academy! Aarav has become more focused and confident since he started learning chess here. The coaches are kind, patient, and make every class fun. He looks forward to every session!"
+          }
         />
       </div>
 
@@ -43,7 +45,9 @@ export default function ReviewsSection() {
           rating={4}
           reviewerName="James Patel"
           reviewerRole="Father of Nina, Age 10"
-          reviewText="Great environment and well-structured lessons. Nina improved her logical thinking and even won her first school tournament. I wish the classes were a bit longer, but overall, highly recommended!"
+          reviewText={
+            "Great environment and well-structured lessons. Nina improved her logical thinking and even won her first school tournament. I wish the classes were a bit longer, but overall, highly recommended!"
+          }
         />
       </div>
 
@@ -60,7 +64,9 @@ export default function ReviewsSection() {
           rating={5}
           reviewerName="Anita Arora"
           reviewerRole="Mother of Kabir, Age 6"
-          reviewText="This is the perfect mix of play and learning. Kabir used to be very restless, but now he can sit and think through problems—thanks to chess! I really appreciate the personalized attention each child gets."
+          reviewText={
+            "This is the perfect mix of play and learning. Kabir used to be very restless, but now he can sit and think through problems—thanks to chess! I really appreciate the personalized attention each child gets."
+          }
         />
       </div>
     </>
