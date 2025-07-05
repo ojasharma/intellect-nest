@@ -260,7 +260,7 @@ export default function HomePage() {
               : "fade-out",
           scrollIndicatorFade: scrollPercentage > 5 ? "fade-out" : "fade-in",
           greatMoveFade: currentPhase === 4 ? "fade-in" : "fade-out",
-          rookMoveFade: currentPhase === 5 ? "fade-in" : "fade-out",
+          rookMoveFade: currentPhase === 6 ? "fade-in" : "fade-out",
           pawnMoveFade: currentPhase === 7 ? "fade-in" : "fade-out",
           finalMoveFade: currentPhase === 9 ? "fade-in" : "fade-out",
           isStatsVisible: currentPhase >= 5,

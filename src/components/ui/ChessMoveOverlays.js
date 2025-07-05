@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import JoinNowButton from "./JoinNowButton"; // We'll create this next
+import JoinNowButton from "./JoinNowButton"; 
 
 export default function ChessMoveOverlays({
   greatMoveFade,
