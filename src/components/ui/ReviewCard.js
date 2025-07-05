@@ -36,7 +36,7 @@ const ReviewCard = ({
             <span className="reviewer-role">({reviewerRole})</span>
           </div>
 
-          <div className="review-text">"{reviewText}"</div>
+          <div className="review-text">&ldquo;{reviewText}&rdquo;</div>
         </div>
       </div>
 
