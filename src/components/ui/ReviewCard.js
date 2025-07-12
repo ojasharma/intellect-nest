@@ -151,7 +151,7 @@ const ReviewCard = ({
 
         .review-content {
           position: relative;
-          z-index: 2;
+          z-index: 9999;
         }
 
         .rating-section {

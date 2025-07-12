@@ -217,7 +217,7 @@ export default function ReviewsSection() {
   return (
     <>
       <div
-        className="absolute z-[3]"
+        className="absolute z-[9999]"
         style={{
           top: `${0 * cardGap}vw`,
           left: `${leftOffset}%`,
@@ -233,7 +233,7 @@ export default function ReviewsSection() {
       </div>
 
       <div
-        className="absolute z-[3]"
+        className="absolute z-[9999]"
         style={{
           top: `${1 * cardGap}vw`,
           right: `${rightOffset}%`,
@@ -249,7 +249,7 @@ export default function ReviewsSection() {
       </div>
 
       <div
-        className="absolute z-[3]"
+        className="absolute z-[9999]"
         style={{
           top: `${2 * cardGap}vw`,
           left: `${leftOffset}%`,
