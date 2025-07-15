@@ -6,7 +6,6 @@ import { countries } from "./contries"; // Make sure this file exists
 export default function TrialFormModal({ isOpen, onClose }) {
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // --- START: ADDED FOR FORM HANDLING ---
   const [formData, setFormData] = useState({
     parentFirstName: "",
     parentLastName: "",
@@ -19,7 +18,7 @@ export default function TrialFormModal({ isOpen, onClose }) {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null); // null, 'success', or 'error'
+  const [submitStatus, setSubmitStatus] = useState(null);
   const [submitMessage, setSubmitMessage] = useState("");
 
   const handleInputChange = (e) => {
@@ -50,7 +49,6 @@ export default function TrialFormModal({ isOpen, onClose }) {
 
       setSubmitStatus("success");
       setSubmitMessage("Thank you! We'll be in touch soon.");
-      // Optional: Reset form and close modal after success
       setTimeout(() => {
         closeModal();
       }, 3000);
@@ -61,13 +59,11 @@ export default function TrialFormModal({ isOpen, onClose }) {
       setIsSubmitting(false);
     }
   };
-  // --- END: ADDED FOR FORM HANDLING ---
 
   const closeModal = () => {
     setIsAnimating(false);
     setTimeout(() => {
       onClose();
-      // Reset form status on close
       setSubmitStatus(null);
       setSubmitMessage("");
       setFormData({
@@ -153,7 +149,6 @@ export default function TrialFormModal({ isOpen, onClose }) {
           </p>
         </div>
 
-        {/* The form now calls handleSubmit on submit */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -161,7 +156,7 @@ export default function TrialFormModal({ isOpen, onClose }) {
                 className="block text-sm font-semibold mb-2"
                 htmlFor="parent-first-name"
               >
-                Parent's First Name*
+                Parent&#39;s First Name*
               </label>
               <input
                 type="text"
@@ -179,7 +174,7 @@ export default function TrialFormModal({ isOpen, onClose }) {
                 className="block text-sm font-semibold mb-2"
                 htmlFor="parent-last-name"
               >
-                Parent's Last Name
+                Parent&#39;s Last Name
               </label>
               <input
                 type="text"
@@ -236,7 +231,7 @@ export default function TrialFormModal({ isOpen, onClose }) {
                 className="block text-sm font-semibold mb-2"
                 htmlFor="kids-name"
               >
-                Kid's Name*
+                Kid&#39;s Name*
               </label>
               <input
                 type="text"
@@ -254,7 +249,7 @@ export default function TrialFormModal({ isOpen, onClose }) {
                 className="block text-sm font-semibold mb-2"
                 htmlFor="kids-age"
               >
-                Kid's Age*
+                Kid&#39;s Age*
               </label>
               <select
                 id="kids-age"
@@ -303,7 +298,7 @@ export default function TrialFormModal({ isOpen, onClose }) {
           </div>
           <div>
             <label className="block text-sm font-semibold mb-2">
-              Kid's Prior Experience*
+              Kid&#39;s Prior Experience*
             </label>
             <div className="space-y-2">
               {[
@@ -338,7 +333,6 @@ export default function TrialFormModal({ isOpen, onClose }) {
                 ? "Submitted!"
                 : "SUBMIT"}
             </button>
-            {/* Submission Status Message */}
             {submitMessage && (
               <p
                 className={`mt-4 text-sm ${
@@ -353,7 +347,6 @@ export default function TrialFormModal({ isOpen, onClose }) {
       </div>
 
       <style jsx>{`
-        /* ... your existing styles ... */
         .liquid-glass-input,
         select.liquid-glass-input {
           background: rgba(255, 255, 255, 0.05);
