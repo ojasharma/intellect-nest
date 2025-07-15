@@ -5,7 +5,7 @@ import { useResponsiveValues } from "@/src/hooks/useResponsiveValues";
 import { useTypewriter } from "@/src/hooks/useTypewriter";
 
 // --- SCALE VARIABLE - Renamed to avoid conflicts ---
-const FAQ_SCALE = 1.3; // Change this value to scale up (>1) or down (<1)
+const FAQ_SCALE = 0.4; // Change this value to scale up (>1) or down (<1)
 
 // --- FAQ Data - Renamed for clarity ---
 const faqContentData = [
@@ -174,7 +174,7 @@ const FAQSection = ({ isFaqVisible }) => {
     <div
       className={`absolute flex flex-col items-center text-white z-[3]`}
       style={{
-        top: "645vh",
+        top: "675vh",
         right: "20%",
         transform: "translateX(40%)",
         fontFamily: "Poppins",

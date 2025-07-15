@@ -1,25 +1,51 @@
-// app/LiquidGlassWrapper.js
 "use client";
+
+import { useState } from "react";
+import TrialFormModal from "./modal/form";
+
 export default function LiquidGlassWrapper({ children }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       {/* Main Capsule */}
       <div className="liquid-glass-box fixed bottom-[5%] left-1/2 -translate-x-1/2 w-[18vw] h-[4vw] bg-[#7CACFF] rounded-full z-[100]">
         {/* Contact Us Text on Left Side */}
         <div className="absolute top-1/2 left-4 -translate-y-1/2 z-[101]">
-          <span className="text-white text-[1.2vw] font-medium">
+          <a
+            href="https://wa.me/919826050902"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white text-[1.2vw] font-medium hover:opacity-80 transition-all duration-200"
+          >
             Contact Us
-          </span>
+          </a>
         </div>
 
         {/* White Overlapping Capsule (Z-Index on Top) */}
-        <div className="white-capsule absolute top-1/2 right-1 -translate-y-1/2 w-[9vw] h-[3vw] rounded-full bg-white z-[101] flex items-center justify-center">
+        <div
+          className="white-capsule absolute top-1/2 right-1 -translate-y-1/2 w-[9vw] h-[3vw] rounded-full bg-white z-[101] flex items-center justify-center cursor-pointer transition-all duration-300  active:scale-95"
+          onClick={openModal}
+        >
           <span className="text-gradient text-[1.5vw] font-semibold">
             Enroll
           </span>
         </div>
       </div>
+
+      {/* Modal */}
+      <TrialFormModal isOpen={isModalOpen} onClose={closeModal} />
+
       {children}
+
       <style jsx>{`
         @keyframes shimmer {
           0% {

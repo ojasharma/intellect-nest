@@ -1,7 +1,9 @@
+// components/ui/ChessMoveOverlays.js
 "use client";
 
-import React from "react";
-import JoinNowButton from "./JoinNowButton"; 
+import React, { useState } from "react"; // Import useState
+import JoinNowButton from "./JoinNowButton";
+import TrialFormModal from "../modal/form"; // Import the TrialFormModal
 
 export default function ChessMoveOverlays({
   greatMoveFade,
@@ -9,6 +11,16 @@ export default function ChessMoveOverlays({
   pawnMoveFade,
   finalMoveFade,
 }) {
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       {/* Great Move! */}
@@ -108,8 +120,12 @@ export default function ChessMoveOverlays({
           <br />
           <span className="font-thin">Rook g4 to finish the game.</span>
         </div>
-        <JoinNowButton />
+        {/* Pass the handleOpenModal function to the JoinNowButton */}
+        <JoinNowButton onClick={handleOpenModal} />
       </div>
+
+      {/* Render the TrialFormModal */}
+      <TrialFormModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </>
   );
 }

@@ -1,18 +1,15 @@
-// pages/faq.js
+// app/page.tsx or pages/index.tsx (depending on your project setup)
 "use client";
 
 import React from "react";
-import FAQComponent from "@/components/sections/FAQSection";
+import TrialFormModal from "@/components/modal/form"; // Adjust the path if needed
 
-export default function FAQPage() {
+export default function HomePage() {
   return (
-    <div
-      className="min-h-screen bg-cover bg-center bg-no-repeat py-10 px-4"
-      style={{
-        backgournd:"black",
-      }}
-    >
-      <FAQComponent />
+    <div className="min-h-screen bg-[#001f3f] text-white">
+      {" "}
+      {/* dark blue background */}
+      <TrialFormModal />
     </div>
   );
 }

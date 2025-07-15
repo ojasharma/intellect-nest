@@ -52,7 +52,7 @@ export default function FeatureSection() {
 
   return (
     <div
-      className="absolute flex flex-col text-left z-[9999]"
+      className="absolute flex flex-col text-left z-[3]"
       style={{
         top: `${CONSTANTS.FEATURE_POSITION}vh`,
         left: "6vw",

@@ -1,8 +1,10 @@
+// components/ui/JoinNowButton.js
 "use client";
 
 import React from "react";
 
-export default function JoinNowButton() {
+// Accept onClick as a prop
+export default function JoinNowButton({ onClick }) {
   const handleMouseEnter = (e) => {
     e.currentTarget.style.transform = "translateX(-50%) scale(1.05)";
     const text = e.currentTarget.querySelector("span");
@@ -42,6 +44,7 @@ export default function JoinNowButton() {
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={onClick} // Add onClick handler here
     >
       <span
         style={{
