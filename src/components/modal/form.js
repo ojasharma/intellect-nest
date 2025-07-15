@@ -99,7 +99,7 @@ export default function TrialFormModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z- flex items-center justify-center p-4 z-[500]">
+    <div className="fixed inset-0 z- flex items-center justify-center p-4 z-[99999]">
       <div
         className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${
           isAnimating ? "opacity-100" : "opacity-0"
