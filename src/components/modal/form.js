@@ -325,7 +325,10 @@ export default function TrialFormModal({ isOpen, onClose }) {
             <button
               type="submit"
               disabled={isSubmitting || submitStatus === "success"}
-              className="bg-blue-600/80 text-white font-bold py-3 px-6 rounded-lg shadow-lg w-fit disabled:bg-gray-500/50 disabled:cursor-not-allowed"
+              className={`
+    bg-transparent-blue text-white font-bold py-3 px-6 rounded-lg shadow-lg w-fit 
+    disabled:bg-gray-500/50 disabled:cursor-not-allowed
+  `}
             >
               {isSubmitting
                 ? "Submitting..."
@@ -401,6 +404,25 @@ export default function TrialFormModal({ isOpen, onClose }) {
         }
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
+        }
+        .bg-transparent-blue {
+          background-color: rgba(
+            0,
+            0,
+            255,
+            0.3
+          ); /* Adjust opacity and color as needed */
+          transition: background-color 0.3s ease;
+        }
+
+        .bg-transparent-blue:hover {
+          background-color: rgba(
+            0,
+            0,
+            255,
+            0.5
+          ); /* Adjust hover opacity and color */
+          cursor: pointer;
         }
       `}</style>
     </div>
