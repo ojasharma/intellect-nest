@@ -1,0 +1,107 @@
+"use client";
+
+import { useState } from "react";
+import TrialFormModal from "./modal/form";
+
+export default function LiquidGlassWrapper({ children }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      {/* Main Capsule */}
+      <div className="liquid-glass-box fixed bottom-[5%] left-1/2 -translate-x-1/2 w-[68vw] h-[20vw] bg-[#7CACFF] rounded-full z-[100]">
+        {/* Contact Us Text on Left Side */}
+        <div className="absolute top-1/2 left-4 -translate-y-1/2 z-[101]">
+          <a
+            href="https://wa.me/919826050902"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white text-[4.5vw] font-medium hover:opacity-80 transition-all duration-200"
+          >
+            Contact Us
+          </a>
+        </div>
+
+        {/* White Overlapping Capsule (Z-Index on Top) */}
+        <div
+          className="white-capsule absolute top-1/2 right-1 -translate-y-1/2 w-[34vw] h-[17vw] rounded-full bg-white z-[101] flex items-center justify-center cursor-pointer transition-all duration-300  active:scale-95"
+          onClick={openModal}
+        >
+          <span className="text-gradient text-[6.5vw] font-semibold">
+            Enroll
+          </span>
+        </div>
+      </div>
+
+      {/* Modal */}
+      <TrialFormModal isOpen={isModalOpen} onClose={closeModal} />
+
+      {children}
+
+      <style jsx>{`
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(200%);
+          }
+        }
+        @keyframes float {
+          0%,
+          100% {
+            transform: translateY(0px) rotate(0deg);
+            opacity: 0.7;
+          }
+          50% {
+            transform: translateY(-10px) rotate(180deg);
+            opacity: 1;
+          }
+        }
+        @keyframes textShimmer {
+          0% {
+            background-position: -200% center;
+          }
+          100% {
+            background-position: 200% center;
+          }
+        }
+        .liquid-glass-box {
+          backdrop-filter: blur(12px);
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.18);
+          box-shadow: 0 8px 30px rgba(0, 27, 74, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+          transition: all 0.3s ease;
+        }
+        .text-gradient {
+          font-family: "Poppins", sans-serif;
+          background: linear-gradient(
+            90deg,
+            #0c0c0e 25%,
+            #00a5ff 50%,
+            #0c0c0e 75%
+          );
+          background-size: 200% 100%;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          text-fill-color: transparent;
+          transition: all 0.3s ease;
+        }
+        .white-capsule:hover .text-gradient {
+          animation: textShimmer 0.8s ease-in-out;
+        }
+      `}</style>
+    </>
+  );
+}

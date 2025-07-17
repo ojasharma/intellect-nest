@@ -5,11 +5,11 @@ import AnimatedText from "@/components/AnimatedText";
 
 export default function UIOverlay() {
   return (
-    <div className="relative w-full h-full flex flex-col items-center z-20 pt-[5vh]">
+    <div className="relative w-full flex flex-col items-center z-20 pt-[5vh]">
       <img
         src="/logo.png"
         alt="Logo"
-        style={{ width: "8vw", height: "auto", marginBottom: "5vh" }}
+        style={{ width: "8vw", height: "auto", marginBottom: "0vh" }}
       />
       <div className="flex-grow flex flex-col items-center justify-start">
         <AnimatedText />
