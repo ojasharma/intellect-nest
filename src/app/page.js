@@ -11,6 +11,7 @@ import {
 import { useResponsiveValues } from "@/src/hooks/useResponsiveValues";
 import { useCountUp } from "@/src/hooks/useCountUp";
 import { useTypewriter } from "@/src/hooks/useTypewriter";
+import { useRouter } from "next/navigation";
 
 // Import Modular Components
 import Scene from "@/components/scene/Scene";
@@ -463,35 +464,23 @@ export default function HomePage() {
 
   const lastKnownPhaseRef = useRef(0);
 
-  useEffect(() => {
-    const unsubscribe = useScrollStore.subscribe((state) => {
-      const { scrollPercentage } = state;
-      const phaseUnit = 100 / CONSTANTS.TOTAL_PHASES;
+const router = useRouter();
 
-      // Simplified phase calculation
-      const currentPhase = Math.floor(scrollPercentage / phaseUnit);
+useEffect(() => {
+  const checkAndRedirect = () => {
+    if (window.innerWidth <= 768) {
+      router.push("/mobile");
+    }
+  };
 
-      if (currentPhase !== lastKnownPhaseRef.current) {
-        setUiState({
-          instructionalFade:
-            scrollPercentage >= phaseUnit && scrollPercentage < phaseUnit * 4
-              ? "fade-in"
-              : "fade-out",
-          scrollIndicatorFade: scrollPercentage > 5 ? "fade-out" : "fade-in",
-          greatMoveFade: currentPhase === 4 ? "fade-in" : "fade-out",
-          rookMoveFade: currentPhase === 6 ? "fade-in" : "fade-out",
-          pawnMoveFade: currentPhase === 7 ? "fade-in" : "fade-out",
-          finalMoveFade: currentPhase === 9 ? "fade-in" : "fade-out",
-          isStatsVisible: currentPhase >= 5,
-          isInstructorsVisible: scrollPercentage >= 62,
-          isFAQVisible: scrollPercentage >= 75, // FAQ appears after instructors
-        });
-        lastKnownPhaseRef.current = currentPhase;
-      }
-    });
+  checkAndRedirect();
+  window.addEventListener("resize", checkAndRedirect);
+  return () => {
+    window.removeEventListener("resize", checkAndRedirect);
+  };
+}, []);
 
-    return () => unsubscribe();
-  }, []);
+
 
   useEffect(() => {
     const handleScroll = () => {
