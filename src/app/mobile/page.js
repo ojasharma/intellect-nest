@@ -4,7 +4,7 @@ import React from "react";
 import UIOverlay from "@/components/ui/UIOverlay";
 import ReviewsSection from "@/components/sections/M_ReviewSection";
 import LiquidGlassWrapper from "@/components/M_LiquidGlassWrapper";
-
+import FeatureSection from "@/components/sections/M_FeatureSection";
 
 
 export default function MobilePage() {
@@ -30,6 +30,7 @@ export default function MobilePage() {
         }}
       >
         <ReviewsSection />
+        <FeatureSection />
       </div>
     </>
   );
