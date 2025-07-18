@@ -5,7 +5,7 @@ import AnimatedText from "@/components/AnimatedText";
 
 export default function UIOverlay() {
   return (
-    <div className="relative w-full flex flex-col items-center z-20 pt-[5vh]">
+    <div className=" w-full flex flex-col items-center z-20 pt-[5vh]">
       <img
         src="/logo.png"
         alt="Logo"

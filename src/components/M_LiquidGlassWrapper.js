@@ -17,7 +17,7 @@ export default function LiquidGlassWrapper({ children }) {
   return (
     <>
       {/* Main Capsule */}
-      <div className="liquid-glass-box fixed bottom-[5%] left-1/2 -translate-x-1/2 w-[68vw] h-[20vw] bg-[#7CACFF] rounded-full z-[100]">
+      <div className="liquid-glass-box fixed top-[85vh] left-1/2 -translate-x-1/2 w-[68vw] h-[20vw] bg-[#7CACFF] rounded-full z-[100]">
         {/* Contact Us Text on Left Side */}
         <div className="absolute top-1/2 left-4 -translate-y-1/2 z-[101]">
           <a

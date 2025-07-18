@@ -11,66 +11,53 @@ export default function ReviewsSection() {
   }) => {
     const renderStars = (count) =>
       Array.from({ length: count }, (_, i) => (
-        <span key={i} className="star">
+        <span key={i} className="text-yellow-400 text-lg">
           ⭐
         </span>
       ));
 
     return (
-      <div className="review-card">
-        <div className="rating">{renderStars(rating)}</div>
-        <div className="reviewer-info">
-          <div className="name">{reviewerName}</div>
-          <div className="role">{reviewerRole}</div>
+      <div
+        className="group relative w-full max-w-3xl mx-auto px-4 py-6 sm:px-6 md:px-8 my-6 transition-all duration-400"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%)",
+          backdropFilter: "blur(12px) saturate(180%)",
+          WebkitBackdropFilter: "blur(12px) saturate(180%)",
+          border: "1px solid rgba(255,255,255,0.15)",
+          borderRadius: "12px",
+          boxShadow: `
+            0 8px 32px rgba(0, 27, 74, 0.3),
+            inset 0 1px 0 rgba(255,255,255,0.2),
+            inset 0 -1px 0 rgba(255,255,255,0.1)
+          `,
+        }}
+      >
+        {/* Stars */}
+        <div className="mb-2">{renderStars(rating)}</div>
+
+        {/* Reviewer */}
+        <div className="mb-1 text-white font-semibold text-base sm:text-lg">
+          {reviewerName}
         </div>
-        <div className="text">&ldquo;{reviewText}&rdquo;</div>
+        <div className="mb-3 text-white text-sm italic opacity-80">
+          {reviewerRole}
+        </div>
 
-        <style jsx>{`
-          .review-card {
-            width: 80%;
-            margin: 24px auto;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            color: white;
-            font-family: sans-serif;
-          }
-
-          .rating {
-            font-size: 20px;
-            margin-bottom: 10px;
-          }
-
-          .reviewer-info {
-            margin-bottom: 10px;
-          }
-
-          .name {
-            font-weight: bold;
-            font-size: 18px;
-          }
-
-          .role {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.7);
-            font-style: italic;
-          }
-
-          .text {
-            font-size: 16px;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.9);
-          }
-        `}</style>
+        {/* Review Text */}
+        <div className="text-white text-sm sm:text-base leading-relaxed opacity-90">
+          &ldquo;{reviewText}&rdquo;
+        </div>
       </div>
     );
   };
 
   return (
-    <div style={{ padding: "0px 0" }}>
+    <div className="px-4 sm:px-8 md:px-16 py-12 relative z-[3]">
+      <div className="text-white text-xl sm:text-2xl md:text-3xl mb-6 font-semibold text-center">
+        What Parents Are Saying
+      </div>
+
       <ReviewCard
         rating={5}
         reviewerName="Radhika Menon"

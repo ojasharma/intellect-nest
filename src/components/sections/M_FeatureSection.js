@@ -2,10 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { useResponsiveValues } from "@/src/hooks/useResponsiveValues";
-import { CONSTANTS } from "@/src/lib/constants";
 
-// Feature data can live here as it's only used by this component
 const features = [
   {
     img: "/1.png",
@@ -48,49 +45,33 @@ const features = [
 ];
 
 export default function FeatureSection() {
-  const responsiveValues = useResponsiveValues();
-
   return (
-    <div
-      className="absolute flex flex-col centerd text-left z-[3]"
-      style={{
-        left: "10%",
-        width: "80%",
-        gap: `${responsiveValues.featureGap}px`,
-      }}
-    >
-      <div
-        className="text-white font-normal mb-0"
-        style={{
-          fontSize: `${responsiveValues.featureTextSize * 1.2}rem`,
-        }}
-      >
+    <div className="relative flex flex-col px-4 sm:px-8 md:px-16 lg:px-20 xl:px-24 py-8 z-[3] space-y-6 sm:space-y-8 mb-20">
+      <div className="text-white font-normal text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-4">
         Why The Intellect Nest?
       </div>
 
       {features.map((feature, idx) => (
         <div
           key={idx}
-          className={`group flex items-start transition-all duration-400 liquid-glass-box`}
+          className="group flex items-start gap-4 sm:gap-6 p-4 sm:p-6 transition-all duration-400 liquid-glass-box"
           style={{
-            gap: `${responsiveValues.featureGap * 0.67}px`,
-            padding: `${responsiveValues.featurePadding}px`,
             background:
               "linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)",
             backdropFilter: "blur(16px) saturate(180%)",
             WebkitBackdropFilter: "blur(16px) saturate(180%)",
             border: "1px solid rgba(255, 255, 255, 0.15)",
-            borderRadius: `${responsiveValues.featureBorderRadius}px`,
+            borderRadius: "12px",
             boxShadow: `
-                            0 8px 32px rgba(0, 27, 74, 0.3),
-                            inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                            inset 0 -1px 0 rgba(255, 255, 255, 0.1)
-                        `,
+              0 8px 32px rgba(0, 27, 74, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2),
+              inset 0 -1px 0 rgba(255, 255, 255, 0.1)
+            `,
             position: "relative",
             overflow: "hidden",
           }}
         >
-          {/* Shimmer and float animations */}
+          {/* Shimmer effect */}
           <div
             className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
             style={{
@@ -100,6 +81,8 @@ export default function FeatureSection() {
               animation: "shimmer 2s infinite",
             }}
           />
+
+          {/* Floating particles */}
           <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
             <div
               className="absolute w-1 h-1 bg-white rounded-full"
@@ -130,19 +113,18 @@ export default function FeatureSection() {
           <Image
             src={feature.img}
             alt={feature.alt}
-            width={responsiveValues.featureIconSize}
-            height={responsiveValues.featureIconSize}
-            className="transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-lg relative z-10"
+            width={48}
+            height={48}
+            className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-lg relative z-10 flex-shrink-0"
             style={{
               filter:
                 "brightness(0) invert(1) drop-shadow(0 0 8px rgba(51, 187, 255, 0.6))",
-              marginTop: `${responsiveValues.featureMarginTop}px`,
             }}
           />
+
           <p
-            className="font-poppins leading-snug text-white relative z-10 transition-all duration-500 group-hover:text-shadow-glow"
+            className="font-poppins leading-snug text-white relative z-10 transition-all duration-500 group-hover:text-shadow-glow text-sm sm:text-base md:text-lg"
             style={{
-              fontSize: `${responsiveValues.featureTextSize}rem`,
               textShadow: "0 0 20px rgba(255, 255, 255, 0.3)",
             }}
           >
@@ -150,6 +132,27 @@ export default function FeatureSection() {
           </p>
         </div>
       ))}
+
+      <style jsx>{`
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
+
+        @keyframes float {
+          0%,
+          100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
+        }
+      `}</style>
     </div>
   );
 }
