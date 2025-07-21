@@ -20,6 +20,7 @@ import ScrollIndicator from "@/components/ui/ScrollIndicator";
 import FeatureSection from "@/components/sections/FeatureSection";
 import ReviewsSection from "@/components/sections/ReviewsSection";
 import ChessMoveOverlays from "@/components/ui/ChessMoveOverlays";
+import LiquidGlassWrapper from "@/components/LiquidGlassWrapper"; // Assuming this is the correct path
 
 // --- FAQ Component ---
 const faqData = [
@@ -427,8 +428,7 @@ const Footer = () => (
       {/* "Made with love" on the right */}
       <div className="text-right">
         <p className="text-xs sm:text-sm text-gray-300 font-light">
-          Made with{" "}
-          <span className="text-red-500 text-lg ">❤️</span> by{" "}
+          Made with <span className="text-red-500 text-lg ">❤️</span> by{" "}
           <a
             href="https://x.com/DieselSharma"
             target="_blank"
@@ -548,98 +548,99 @@ export default function HomePage() {
 
   return (
     <>
-      <main className="relative h-screen flex flex-col items-center overflow-hidden">
-        <img
-          src="/bluenoise.png"
-          alt="Bluenoise background"
-          className="fixed inset-0 w-full h-full object-cover pointer-events-none select-none z-0 opacity-20"
-        />
+      <LiquidGlassWrapper>
+        <main className="relative h-screen flex flex-col items-center overflow-hidden">
+          <img
+            src="/bluenoise.png"
+            alt="Bluenoise background"
+            className="fixed inset-0 w-full h-full object-cover pointer-events-none select-none z-0 opacity-20"
+          />
 
-        <InstructionalText fadeClass={uiState.instructionalFade} />
+          <InstructionalText fadeClass={uiState.instructionalFade} />
 
-        <ChessMoveOverlays {...uiState} />
+          <ChessMoveOverlays {...uiState} />
 
-        <Scene
-          scrollToPercent={scrollToPercent}
-          totalPhases={CONSTANTS.TOTAL_PHASES}
-        />
-        <UIOverlay />
-        <ScrollIndicator scrollFadeClass={uiState.scrollIndicatorFade} />
-      </main>
+          <Scene
+            scrollToPercent={scrollToPercent}
+            totalPhases={CONSTANTS.TOTAL_PHASES}
+          />
+          <UIOverlay />
+          <ScrollIndicator scrollFadeClass={uiState.scrollIndicatorFade} />
+        </main>
 
-      {/* Scrollable container for content */}
-      <div
-        style={{
-          height: `${PAGE_HEIGHT_VH}vh`,
-          width: "100%",
-          pointerEvents: "none",
-          position: "relative",
-        }}
-      >
-        <FeatureSection />
+        {/* Scrollable container for content */}
+        <div
+          style={{
+            height: `${PAGE_HEIGHT_VH}vh`,
+            width: "100%",
+            pointerEvents: "none",
+            position: "relative",
+          }}
+        >
+          <FeatureSection />
 
-        <StatsSection stats={stats} isVisible={uiState.isStatsVisible} />
-        <InstructorsSection
-          instructors={instructors}
-          isVisible={uiState.isInstructorsVisible}
-        />
-        <FAQSection isVisible={uiState.isFAQVisible} />
-        <ReviewsSection />
-        <Footer />
-      </div>
+          <StatsSection stats={stats} isVisible={uiState.isStatsVisible} />
+          <InstructorsSection
+            instructors={instructors}
+            isVisible={uiState.isInstructorsVisible}
+          />
+          <FAQSection isVisible={uiState.isFAQVisible} />
+          <ReviewsSection />
+          <Footer />
+        </div>
 
-      {/* Global Styles */}
-      <style jsx global>{`
-        @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
+        {/* Global Styles */}
+        <style jsx global>{`
+          @keyframes shimmer {
+            0% {
+              transform: translateX(-100%);
+            }
+            100% {
+              transform: translateX(200%);
+            }
           }
-          100% {
-            transform: translateX(200%);
-          }
-        }
 
-        @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0px) rotate(0deg);
-            opacity: 0.7;
+          @keyframes float {
+            0%,
+            100% {
+              transform: translateY(0px) rotate(0deg);
+              opacity: 0.7;
+            }
+            50% {
+              transform: translateY(-10px) rotate(180deg);
+              opacity: 1;
+            }
           }
-          50% {
-            transform: translateY(-10px) rotate(180deg);
-            opacity: 1;
-          }
-        }
 
-        .liquid-glass-box:hover {
-          background: linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.18) 0%,
-            rgba(255, 255, 255, 0.08) 100%
-          );
-          border-color: rgba(255, 255, 255, 0.3);
-          box-shadow: 0 12px 40px rgba(0, 27, 74, 0.4),
-            0 0 60px rgba(51, 187, 255, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.3),
-            inset 0 -1px 0 rgba(255, 255, 255, 0.2);
-          transform: translateY(-4px) scale(1.02);
-        }
-
-        .text-shadow-glow {
-          text-shadow: 0 0 30px rgba(255, 255, 255, 0.8),
-            0 0 60px rgba(51, 187, 255, 0.4);
-        }
-
-        @keyframes gradientShift {
-          0% {
-            background-position: 0% 0%;
+          .liquid-glass-box:hover {
+            background: linear-gradient(
+              135deg,
+              rgba(255, 255, 255, 0.18) 0%,
+              rgba(255, 255, 255, 0.08) 100%
+            );
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 27, 74, 0.4),
+              0 0 60px rgba(51, 187, 255, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3),
+              inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px) scale(1.02);
           }
-          100% {
-            background-position: -200% 0%;
+
+          .text-shadow-glow {
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8),
+              0 0 60px rgba(51, 187, 255, 0.4);
           }
-        }
-      `}</style>
+
+          @keyframes gradientShift {
+            0% {
+              background-position: 0% 0%;
+            }
+            100% {
+              background-position: -200% 0%;
+            }
+          }
+        `}</style>
+      </LiquidGlassWrapper>
     </>
   );
 }
-

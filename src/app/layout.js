@@ -1,5 +1,5 @@
 import "./globals.css";
-import LiquidGlassWrapper from "../components/LiquidGlassWrapper";
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata = {
   title: "The Intellect Nest",
@@ -11,6 +11,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="antialiased relative">
         {children}
+        <Analytics/>
       </body>
     </html>
   );
