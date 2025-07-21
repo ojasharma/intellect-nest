@@ -4,7 +4,7 @@ import { useState } from "react";
 import TrialFormModal from "./modal/form";
 
 export default function LiquidGlassWrapper({ children }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
   const openModal = () => {
     setIsModalOpen(true);

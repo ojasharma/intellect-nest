@@ -151,7 +151,7 @@ const FAQSection = () => {
   };
 
   return (
-    <div className="relative w-full py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+    <div className="relative w-full py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 mb-30">
       <div className="max-w-[700px] mx-auto">
         {/* Heading */}
         <h2

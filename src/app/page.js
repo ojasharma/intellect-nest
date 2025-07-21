@@ -428,7 +428,7 @@ const Footer = () => (
       <div className="text-right">
         <p className="text-xs sm:text-sm text-gray-300 font-light">
           Made with{" "}
-          <span className="text-red-500 text-lg animate-pulse">❤️</span> by{" "}
+          <span className="text-red-500 text-lg ">❤️</span> by{" "}
           <a
             href="https://x.com/DieselSharma"
             target="_blank"

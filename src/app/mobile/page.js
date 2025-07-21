@@ -8,7 +8,7 @@ import FeatureSection from "@/components/sections/M_FeatureSection";
 import StatsSection from "@/components/sections/M_StatsSection";
 import InstructorsSection from "@/components/sections/M_InstructorSection";
 import FAQSection from "@/components/sections/M_FAQSection";
-
+import Footer from "@/components/sections/M_Footer";
 
 export default function MobilePage() {
   return (
@@ -49,6 +49,9 @@ export default function MobilePage() {
         </section>
         <section className="relative z-10 w-full">
           <FAQSection />
+        </section>
+        <section className="relative z-10 w-full">
+          <Footer />
         </section>
       </div>
     </>
