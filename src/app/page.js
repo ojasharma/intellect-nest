@@ -463,6 +463,25 @@ export default function HomePage() {
 
   const lastKnownPhaseRef = useRef(0);
 
+  // --- ADDED FOR REDIRECTION ---
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 786) {
+        // Using window.location.replace to avoid adding to history
+        window.location.replace("/mobile");
+      }
+    };
+    // Check on initial render
+    handleResize();
+    // Add event listener for window resize
+    window.addEventListener("resize", handleResize);
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+  // --- END OF REDIRECTION CODE ---
+
   useEffect(() => {
     const unsubscribe = useScrollStore.subscribe((state) => {
       const { scrollPercentage } = state;
@@ -623,3 +642,4 @@ export default function HomePage() {
     </>
   );
 }
+
