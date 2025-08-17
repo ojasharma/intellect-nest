@@ -1,4 +1,4 @@
-// pages/zoom.tsx
+//src/app/zoom/page.js
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 
