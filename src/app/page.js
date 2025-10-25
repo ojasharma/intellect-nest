@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useScrollStore } from "@/src/store";
 import {
   CONSTANTS,
@@ -17,10 +18,14 @@ import Scene from "@/components/scene/Scene";
 import UIOverlay from "@/components/ui/UIOverlay";
 import InstructionalText from "@/components/ui/InstructionalText";
 import ScrollIndicator from "@/components/ui/ScrollIndicator";
-import FeatureSection from "@/components/sections/FeatureSection";
-import ReviewsSection from "@/components/sections/ReviewsSection";
 import ChessMoveOverlays from "@/components/ui/ChessMoveOverlays";
-import LiquidGlassWrapper from "@/components/LiquidGlassWrapper"; // Assuming this is the correct path
+import LiquidGlassWrapper from "@/components/LiquidGlassWrapper";
+
+// --- DYNAMIC IMPORTS for LAZY LOADING ---
+const FeatureSection = dynamic(() => import("@/components/sections/FeatureSection"));
+const ReviewsSection = dynamic(() => import("@/components/sections/ReviewsSection"));
+const FAQSection = dynamic(() => import("@/components/sections/FAQSection"));
+
 
 // --- FAQ Component ---
 const faqData = [
@@ -64,18 +69,12 @@ const FAQItem = ({ item }) => {
 
   const handleClick = () => {
     setIsOpen(!isOpen);
-    console.log(`Clicked: ${item.question}`);
-  };
-
-  const handleMouseEnter = () => {
-    console.log(`Hovered: ${item.question}`);
   };
 
   return (
     <div
-      className="group relative transition-all duration-400 overflow-hidden"
+      className="group relative transition-all duration-400 overflow-hidden cursor-pointer"
       onClick={handleClick}
-      onMouseEnter={handleMouseEnter}
       style={{
         gap: "20px",
         padding: "20px",
@@ -93,11 +92,9 @@ const FAQItem = ({ item }) => {
         `,
       }}
     >
-      {/* ... shimmer and floating dots ... */}
-
       <div className="w-full text-left flex justify-between items-center relative z-10">
         <span
-          className="font-semibold font-poppins"
+          className="font-semibold"
           style={{
             fontSize: "1.25rem",
             color: "white",
@@ -117,7 +114,7 @@ const FAQItem = ({ item }) => {
         } transition-all duration-500 ease-in-out overflow-hidden mt-2`}
       >
         <p
-          className="text-white font-light font-poppins leading-snug"
+          className="text-white font-light leading-snug"
           style={{
             fontSize: "1rem",
             textShadow: "0 0 12px rgba(255, 255, 255, 0.2)",
@@ -125,47 +122,6 @@ const FAQItem = ({ item }) => {
         >
           {item.answer}
         </p>
-      </div>
-    </div>
-  );
-};
-
-const FAQSection = ({ isVisible }) => {
-  const responsiveValues = useResponsiveValues();
-  const headingText = useTypewriter(
-    "Frequently Asked Questions",
-    isVisible ? 50 : 9999
-  );
-
-  return (
-    <div
-      className={`absolute flex flex-col items-center text-white z-[999]`}
-      style={{
-        top: "640vh", // Positioned after instructors section
-        right: "0%",
-        // transform: "translateX(-50%)",
-        fontFamily: "Poppins",
-        width: "50%",
-        maxWidth: "800px",
-        padding: `${responsiveValues.instructorPadding}px`,
-        pointerEvents: "auto",
-      }}
-    >
-      <h2
-        className="font-bold mb-2 h-14 font-poppins text-center"
-        style={{
-          fontSize: `${0.6 * responsiveValues.instructorHeadingSize}rem`,
-          textShadow: "0 0 24px rgba(255, 255, 255, 0.4)",
-        }}
-      >
-        {headingText}
-      </h2>
-      <div className="w-full max-w-3xl mx-auto px-6 z-[2]">
-        <div className="flex flex-col gap-4">
-          {faqData.map((item, index) => (
-            <FAQItem key={index} item={item} />
-          ))}
-        </div>
       </div>
     </div>
   );
@@ -221,7 +177,6 @@ const StatsSection = ({ stats, isVisible }) => {
         right: "6vw",
         width: `${responsiveValues.statsWidth}px`,
         gap: `${responsiveValues.statsGap}px`,
-        fontFamily: "Poppins",
       }}
     >
       {stats.map((stat, idx) => (
@@ -264,7 +219,7 @@ const StatsSection = ({ stats, isVisible }) => {
                 "brightness(0) invert(1) drop-shadow(0 0 8px rgba(51, 187, 255, 0.6))",
             }}
           />
-          <p className="font-poppins leading-tight text-white relative z-10 transition-all duration-500 group-hover:text-shadow-glow">
+          <p className="leading-tight text-white relative z-10 transition-all duration-500 group-hover:text-shadow-glow">
             <span
               className="font-extrabold"
               style={{ fontSize: `${responsiveValues.statsNumberSize}rem` }}
@@ -299,13 +254,12 @@ const InstructorsSection = ({ instructors, isVisible }) => {
         top: "440vh",
         left: "30%",
         transform: "translateX(-50%)",
-        fontFamily: "Poppins",
         width: "100%",
         padding: `${responsiveValues.instructorPadding}px`,
       }}
     >
       <h2
-        className="font-bold mb-16 h-14 font-poppins text-center"
+        className="font-bold mb-16 h-14 text-center"
         style={{ fontSize: `${responsiveValues.instructorHeadingSize}rem` }}
       >
         {headingText}
@@ -359,7 +313,6 @@ const InstructorsSection = ({ instructors, isVisible }) => {
         ))}
       </div>
       <style jsx>{`
-        /* Keeping this style local as it's specific to this component */
         .liquid-glass-box:hover {
           transform: translateY(-8px) scale(1.03);
           box-shadow: 0 16px 45px rgba(0, 20, 50, 0.35),
@@ -384,7 +337,6 @@ const Footer = () => (
     }}
   >
     <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
-      {/* Social Links on the left */}
       <div className="flex gap-4 sm:gap-8">
         <a
           href="https://www.instagram.com/the_intellectnest/"
@@ -425,7 +377,6 @@ const Footer = () => (
         </a>
       </div>
 
-      {/* "Made with love" on the right */}
       <div className="text-right">
         <p className="text-xs sm:text-sm text-gray-300 font-light">
           Made with <span className="text-red-500 text-lg ">❤️</span> by{" "}
@@ -463,24 +414,8 @@ export default function HomePage() {
 
   const lastKnownPhaseRef = useRef(0);
 
-  // --- ADDED FOR REDIRECTION ---
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 786) {
-        // Using window.location.replace to avoid adding to history
-        window.location.replace("/mobile");
-      }
-    };
-    // Check on initial render
-    handleResize();
-    // Add event listener for window resize
-    window.addEventListener("resize", handleResize);
-    // Cleanup the event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-  // --- END OF REDIRECTION CODE ---
+  // --- CLIENT-SIDE REDIRECTION REMOVED ---
+  // This is now handled by the middleware for better performance.
 
   useEffect(() => {
     const unsubscribe = useScrollStore.subscribe((state) => {
@@ -503,7 +438,7 @@ export default function HomePage() {
           finalMoveFade: currentPhase === 9 ? "fade-in" : "fade-out",
           isStatsVisible: currentPhase >= 5,
           isInstructorsVisible: scrollPercentage >= 62,
-          isFAQVisible: scrollPercentage >= 75, // FAQ appears after instructors
+          isFAQVisible: scrollPercentage >= 75,
         });
         lastKnownPhaseRef.current = currentPhase;
       }
@@ -550,10 +485,13 @@ export default function HomePage() {
     <>
       <LiquidGlassWrapper>
         <main className="relative h-screen flex flex-col items-center overflow-hidden">
-          <img
+          <Image
             src="/bluenoise.png"
             alt="Bluenoise background"
-            className="fixed inset-0 w-full h-full object-cover pointer-events-none select-none z-0 opacity-20"
+            layout="fill"
+            objectFit="cover"
+            className="pointer-events-none select-none z-0 opacity-20"
+            priority
           />
 
           <InstructionalText fadeClass={uiState.instructionalFade} />
@@ -568,7 +506,6 @@ export default function HomePage() {
           <ScrollIndicator scrollFadeClass={uiState.scrollIndicatorFade} />
         </main>
 
-        {/* Scrollable container for content */}
         <div
           style={{
             height: `${PAGE_HEIGHT_VH}vh`,
@@ -578,7 +515,6 @@ export default function HomePage() {
           }}
         >
           <FeatureSection />
-
           <StatsSection stats={stats} isVisible={uiState.isStatsVisible} />
           <InstructorsSection
             instructors={instructors}
@@ -589,7 +525,6 @@ export default function HomePage() {
           <Footer />
         </div>
 
-        {/* Global Styles */}
         <style jsx global>{`
           @keyframes shimmer {
             0% {
@@ -597,18 +532,6 @@ export default function HomePage() {
             }
             100% {
               transform: translateX(200%);
-            }
-          }
-
-          @keyframes float {
-            0%,
-            100% {
-              transform: translateY(0px) rotate(0deg);
-              opacity: 0.7;
-            }
-            50% {
-              transform: translateY(-10px) rotate(180deg);
-              opacity: 1;
             }
           }
 
@@ -629,15 +552,6 @@ export default function HomePage() {
           .text-shadow-glow {
             text-shadow: 0 0 30px rgba(255, 255, 255, 0.8),
               0 0 60px rgba(51, 187, 255, 0.4);
-          }
-
-          @keyframes gradientShift {
-            0% {
-              background-position: 0% 0%;
-            }
-            100% {
-              background-position: -200% 0%;
-            }
           }
         `}</style>
       </LiquidGlassWrapper>

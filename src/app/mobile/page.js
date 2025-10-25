@@ -1,59 +1,53 @@
 "use client";
 
 import React from "react";
-import UIOverlay from "@/components/ui/UIOverlay";
-import ReviewsSection from "@/components/sections/M_ReviewSection";
+import Image from "next/image";
+import dynamic from 'next/dynamic';
 import LiquidGlassWrapper from "@/components/M_LiquidGlassWrapper";
-import FeatureSection from "@/components/sections/M_FeatureSection";
-import StatsSection from "@/components/sections/M_StatsSection";
-import InstructorsSection from "@/components/sections/M_InstructorSection";
-import FAQSection from "@/components/sections/M_FAQSection";
-import Footer from "@/components/sections/M_Footer";
+
+// --- DYNAMIC IMPORTS for LAZY LOADING ---
+const FeatureSection = dynamic(() => import('@/components/sections/M_FeatureSection'));
+const StatsSection = dynamic(() => import('@/components/sections/M_StatsSection'));
+const InstructorsSection = dynamic(() => import('@/components/sections/M_InstructorSection'));
+const ReviewsSection = dynamic(() => import('@/components/sections/M_ReviewSection'));
+const FAQSection = dynamic(() => import('@/components/sections/M_FAQSection'));
+const Footer = dynamic(() => import('@/components/sections/M_Footer'));
 
 export default function MobilePage() {
   return (
-    <>
-      <main className="relative flex flex-col items-center overflow-hidden">
-        <img
+    <LiquidGlassWrapper>
+      <main className="relative flex flex-col items-center overflow-hidden text-white">
+        <Image
           src="/bluenoise.png"
           alt="Bluenoise background"
-          className="fixed inset-0 w-full h-full object-cover pointer-events-none select-none z-[0] opacity-20"
+          layout="fill"
+          objectFit="cover"
+          className="fixed pointer-events-none select-none z-[-1] opacity-20"
+          priority
         />
-      </main>
-      <LiquidGlassWrapper />
-      <UIOverlay />
 
-      {/* Scrollable container for content */}
-      <div
-        className="relative flex flex-col"
-        style={{
-          minHeight: "100vh",
-          width: "100%",
-          pointerEvents: "auto",
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
-        {/* Each section in normal document flow */}
-        <section className="relative z-10 w-full">
-          <ReviewsSection />
+        {/* --- HERO SECTION --- */}
+        <section className="w-full h-screen flex flex-col justify-center items-center text-center p-4">
+          <Image src="/logo.png" alt="Intellect Nest Logo" width={120} height={120} priority />
+          <h1 className="text-4xl font-bold mt-4">The Intellect Nest</h1>
+          <p className="mt-2 text-lg">Nurturing Young Minds Through Chess</p>
+          <a
+            href="#features"
+            className="mt-8 px-8 py-3 bg-blue-600 rounded-full font-semibold hover:bg-blue-700 transition-colors"
+          >
+            Learn More
+          </a>
         </section>
-        <section className="relative z-10 w-full">
-          <FeatureSection />
-        </section>
-        <section className="relative z-10 w-full">
-          <StatsSection />
-        </section>
-        <section className="relative z-10 w-full">
-          <InstructorsSection />
-        </section>
-        <section className="relative z-10 w-full">
-          <FAQSection />
-        </section>
-        <section className="relative z-10 w-full">
-          <Footer />
-        </section>
-      </div>
-    </>
+
+        {/* --- LAZY-LOADED CONTENT SECTIONS --- */}
+        <FeatureSection />
+        <StatsSection />
+        <InstructorsSection />
+        <ReviewsSection />
+        <FAQSection />
+        <Footer />
+        
+      </main>
+    </LiquidGlassWrapper>
   );
 }
