@@ -1,42 +1,33 @@
 "use client";
 
 import React, { useState } from "react";
-import { useResponsiveValues } from "@/src/hooks/useResponsiveValues";
 import { useTypewriter } from "@/src/hooks/useTypewriter";
+import { useResponsiveValues } from "@/src/hooks/useResponsiveValues";
 
-// --- SCALE VARIABLE - Renamed to avoid conflicts ---
-const FAQ_SCALE = 0.4; // Change this value to scale up (>1) or down (<1)
-
-// --- FAQ Data - Renamed for clarity ---
-const faqContentData = [
+const faqData = [
   {
     question: "My child is a complete beginner. Can they still join?",
     answer:
-      "Absolutely! We have beginner-level programs designed for children with no experience. Our coaches use fun methods like stories and games to teach chess basics.",
+      "Absolutely! We have dedicated beginner-level programs designed for children with no prior experience. Our coaches use fun, engaging methods like stories, puzzles, and games to teach the basics of chess step-by-step.",
   },
   {
     question: "How much time does my child need to commit each week?",
     answer:
-      "Our program usually requires 2–3 sessions per week, each about 45 minutes. This helps children improve steadily without feeling overwhelmed.",
+      "Our regular program usually requires 2 to 3 sessions per week, each lasting about 45–60 minutes. This schedule helps your child improve steadily without feeling overwhelmed.",
   },
   {
     question: "Are the classes conducted online or in-person?",
     answer:
-      "All our classes are online through live sessions. Your child learns in real time with individual attention and progress tracking.",
+      "All our classes are conducted online through live, interactive sessions. Your child will learn from experienced coaches in real time, with individual attention and progress tracking—just like in a physical classroom.",
   },
 ];
 
-// --- Chevron Icon - Renamed to avoid conflicts ---
-const FAQChevronIcon = ({ isOpen }) => (
+const ChevronIcon = ({ isOpen }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className={`text-white transition-transform duration-300 ${
+    className={`h-5 w-5 text-white transition-transform duration-300 ${
       isOpen ? "rotate-180" : ""
     }`}
-    style={{
-      height: `${12 * FAQ_SCALE}px`,
-      width: `${12 * FAQ_SCALE}px`,
-    }}
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -50,168 +41,100 @@ const FAQChevronIcon = ({ isOpen }) => (
   </svg>
 );
 
-// --- FAQ Item - Renamed and updated for click functionality ---
-const FAQAccordionItem = ({ faqItem, isFaqOpen, onToggle }) => {
+const FAQItem = ({ item }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div
       className="group relative transition-all duration-400 overflow-hidden cursor-pointer"
+      onClick={() => setIsOpen(!isOpen)}
       style={{
-        gap: `${12 * FAQ_SCALE}px`,
-        padding: `${14 * FAQ_SCALE}px`,
+        gap: "20px",
+        padding: "20px",
         marginBottom: "0px",
         background:
-          "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03))",
-        backdropFilter: "blur(12px) saturate(160%)",
-        WebkitBackdropFilter: "blur(12px) saturate(160%)",
-        border: "1px solid rgba(255,255,255,0.12)",
-        borderRadius: `${12 * FAQ_SCALE}px`,
-        boxShadow: `0 ${6 * FAQ_SCALE}px ${
-          18 * FAQ_SCALE
-        }px rgba(0,27,74,0.2), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(255,255,255,0.05)`,
+          "linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)",
+        backdropFilter: "blur(16px) saturate(180%)",
+        WebkitBackdropFilter: "blur(16px) saturate(180%)",
+        border: "1px solid rgba(255, 255, 255, 0.15)",
+        borderRadius: "18px",
+        boxShadow: `
+          0 8px 32px rgba(0, 27, 74, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2),
+          inset 0 -1px 0 rgba(255, 255, 255, 0.1)
+        `,
       }}
-      onClick={onToggle} // Use onClick to toggle the item
     >
-      {/* Shimmer effect (still triggers on hover for visual flair) */}
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{
-          background:
-            "linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.08) 50%, transparent 70%)",
-          transform: "translateX(-100%)",
-          animation: "shimmer 2s infinite",
-        }}
-      />
-      {/* Floating dots (still triggers on hover) */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-700">
-        <div
-          className="absolute bg-white rounded-full"
-          style={{
-            width: `${0.5 * FAQ_SCALE}rem`,
-            height: `${0.5 * FAQ_SCALE}rem`,
-            top: "20%",
-            left: "15%",
-            animation: "float 3s ease-in-out infinite",
-          }}
-        />
-        <div
-          className="absolute bg-blue-300 rounded-full"
-          style={{
-            width: `${0.5 * FAQ_SCALE}rem`,
-            height: `${0.5 * FAQ_SCALE}rem`,
-            top: "60%",
-            right: "25%",
-            animation: "float 4s ease-in-out infinite reverse",
-          }}
-        />
-        <div
-          className="absolute bg-white rounded-full"
-          style={{
-            width: `${0.5 * FAQ_SCALE}rem`,
-            height: `${0.5 * FAQ_SCALE}rem`,
-            bottom: "30%",
-            left: "70%",
-            animation: "float 3.5s ease-in-out infinite",
-          }}
-        />
-      </div>
-
-      {/* FAQ Question */}
       <div className="w-full text-left flex justify-between items-center relative z-10">
         <span
-          className="font-semibold font-poppins"
+          className="font-semibold"
           style={{
-            fontSize: `${0.95 * FAQ_SCALE}rem`,
+            fontSize: "1.25rem",
             color: "white",
-            textShadow: "0 0 10px rgba(255, 255, 255, 0.2)",
+            textShadow: "0 0 20px rgba(255, 255, 255, 0.3)",
           }}
         >
-          {faqItem.question}
+          {item.question}
         </span>
-        <FAQChevronIcon isOpen={isFaqOpen} />
+        <ChevronIcon isOpen={isOpen} />
       </div>
 
-      {/* FAQ Answer */}
       <div
-        className="relative z-10 transition-all duration-500 ease-in-out overflow-hidden"
-        style={{
-          maxHeight: isFaqOpen ? `${300 * FAQ_SCALE}px` : "0", // Control visibility with isFaqOpen
-          opacity: isFaqOpen ? 1 : 0, // Control visibility with isFaqOpen
-          marginTop: isFaqOpen ? `${12 * FAQ_SCALE}px` : "0", // Add margin when open
-        }}
+        className={`relative z-10 max-h-0 ${
+          isOpen ? "max-h-[500px]" : ""
+        } opacity-0 ${
+          isOpen ? "opacity-100" : ""
+        } transition-all duration-500 ease-in-out overflow-hidden mt-2`}
       >
         <p
-          className="text-white font-light font-poppins leading-snug"
+          className="text-white font-light leading-snug"
           style={{
-            fontSize: `${0.85 * FAQ_SCALE}rem`,
-            textShadow: "0 0 8px rgba(255,255,255,0.1)",
+            fontSize: "1rem",
+            textShadow: "0 0 12px rgba(255, 255, 255, 0.2)",
           }}
         >
-          {faqItem.answer}
+          {item.answer}
         </p>
       </div>
     </div>
   );
 };
 
-// --- FAQ Section Component - Updated to manage open/close state ---
-const FAQSection = ({ isFaqVisible }) => {
+export default function FAQSection({ isVisible }) {
   const responsiveValues = useResponsiveValues();
-  // State to track which FAQ item is open
-  const [openFaqIndex, setOpenFaqIndex] = useState(null);
-
-  const faqHeadingText = useTypewriter(
+  const headingText = useTypewriter(
     "Frequently Asked Questions",
-    isFaqVisible ? 50 : 9999
+    isVisible ? 50 : 9999
   );
-
-  // Function to toggle FAQ items
-  const handleToggleFaq = (index) => {
-    // If the clicked item is already open, close it. Otherwise, open it.
-    setOpenFaqIndex(openFaqIndex === index ? null : index);
-  };
 
   return (
     <div
-      className={`absolute flex flex-col items-center text-white z-[3]`}
+      className={`absolute flex flex-col items-center text-white z-[999]`}
       style={{
-        top: "675vh",
-        right: "20%",
-        transform: "translateX(40%)",
-        fontFamily: "Poppins",
-        width: `${30 * FAQ_SCALE}%`,
-        maxWidth: `${680 * FAQ_SCALE}px`,
-        padding: `${responsiveValues.instructorPadding * 0.8 * FAQ_SCALE}px`,
+        top: "640vh",
+        right: "0%",
+        width: "50%",
+        maxWidth: "800px",
+        padding: `${responsiveValues.instructorPadding}px`,
+        pointerEvents: "auto",
       }}
     >
       <h2
-        className="font-bold font-poppins text-center"
+        className="font-bold mb-2 h-14 text-center"
         style={{
-          fontSize: `${
-            responsiveValues.instructorHeadingSize * 0.5 * FAQ_SCALE
-          }rem`,
-          textShadow: "0 0 18px rgba(255, 255, 255, 0.3)",
-          marginBottom: `${10 * FAQ_SCALE}px`,
+          fontSize: `${0.6 * responsiveValues.instructorHeadingSize}rem`,
+          textShadow: "0 0 24px rgba(255, 255, 255, 0.4)",
         }}
       >
-        {faqHeadingText}
+        {headingText}
       </h2>
-      <div
-        className="w-full max-w-2xl mx-auto z-[2]"
-        style={{ padding: `0 ${4 * FAQ_SCALE}px` }}
-      >
-        <div className="flex flex-col" style={{ gap: `${3 * FAQ_SCALE}px` }}>
-          {faqContentData.map((item, index) => (
-            <FAQAccordionItem
-              key={index}
-              faqItem={item}
-              isFaqOpen={openFaqIndex === index} // Pass whether it should be open
-              onToggle={() => handleToggleFaq(index)} // Pass the handler function
-            />
+      <div className="w-full max-w-3xl mx-auto px-6 z-[2]">
+        <div className="flex flex-col gap-4">
+          {faqData.map((item, index) => (
+            <FAQItem key={index} item={item} />
           ))}
         </div>
       </div>
     </div>
   );
-};
-
-export default FAQSection;
+}

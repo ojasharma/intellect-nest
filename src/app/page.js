@@ -26,107 +26,6 @@ const FeatureSection = dynamic(() => import("@/components/sections/FeatureSectio
 const ReviewsSection = dynamic(() => import("@/components/sections/ReviewsSection"));
 const FAQSection = dynamic(() => import("@/components/sections/FAQSection"));
 
-
-// --- FAQ Component ---
-const faqData = [
-  {
-    question: "My child is a complete beginner. Can they still join?",
-    answer:
-      "Absolutely! We have dedicated beginner-level programs designed for children with no prior experience. Our coaches use fun, engaging methods like stories, puzzles, and games to teach the basics of chess step-by-step.",
-  },
-  {
-    question: "How much time does my child need to commit each week?",
-    answer:
-      "Our regular program usually requires 2 to 3 sessions per week, each lasting about 45–60 minutes. This schedule helps your child improve steadily without feeling overwhelmed.",
-  },
-  {
-    question: "Are the classes conducted online or in-person?",
-    answer:
-      "All our classes are conducted online through live, interactive sessions. Your child will learn from experienced coaches in real time, with individual attention and progress tracking—just like in a physical classroom.",
-  },
-];
-
-const ChevronIcon = ({ isOpen }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className={`h-5 w-5 text-white transition-transform duration-300 ${
-      isOpen ? "rotate-180" : ""
-    }`}
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M19 9l-7 7-7-7"
-    />
-  </svg>
-);
-const FAQItem = ({ item }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleClick = () => {
-    setIsOpen(!isOpen);
-  };
-
-  return (
-    <div
-      className="group relative transition-all duration-400 overflow-hidden cursor-pointer"
-      onClick={handleClick}
-      style={{
-        gap: "20px",
-        padding: "20px",
-        marginBottom: "0px",
-        background:
-          "linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)",
-        backdropFilter: "blur(16px) saturate(180%)",
-        WebkitBackdropFilter: "blur(16px) saturate(180%)",
-        border: "1px solid rgba(255, 255, 255, 0.15)",
-        borderRadius: "18px",
-        boxShadow: `
-          0 8px 32px rgba(0, 27, 74, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2),
-          inset 0 -1px 0 rgba(255, 255, 255, 0.1)
-        `,
-      }}
-    >
-      <div className="w-full text-left flex justify-between items-center relative z-10">
-        <span
-          className="font-semibold"
-          style={{
-            fontSize: "1.25rem",
-            color: "white",
-            textShadow: "0 0 20px rgba(255, 255, 255, 0.3)",
-          }}
-        >
-          {item.question}
-        </span>
-        <ChevronIcon isOpen={isOpen} />
-      </div>
-
-      <div
-        className={`relative z-10 max-h-0 ${
-          isOpen ? "max-h-[500px]" : ""
-        } opacity-0 ${
-          isOpen ? "opacity-100" : ""
-        } transition-all duration-500 ease-in-out overflow-hidden mt-2`}
-      >
-        <p
-          className="text-white font-light leading-snug"
-          style={{
-            fontSize: "1rem",
-            textShadow: "0 0 12px rgba(255, 255, 255, 0.2)",
-          }}
-        >
-          {item.answer}
-        </p>
-      </div>
-    </div>
-  );
-};
-
 // --- Data for local components ---
 const stats = [
   { img: "/4.png", alt: "Students Taught", value: 50, text: "Students Taught" },
@@ -155,7 +54,7 @@ const instructors = [
   },
 ];
 
-// --- Helper components kept local for scroll-dependent sections ---
+// --- Helper components kept local ---
 const StatCounter = ({ endValue }) => {
   const count = useCountUp(endValue);
   return <span>{count}+</span>;
@@ -166,7 +65,7 @@ const Typewriter = ({ text, speed }) => {
   return <>{displayText}</>;
 };
 
-// --- Scroll-dependent components kept local to avoid performance issues ---
+// --- Scroll-dependent components kept local ---
 const StatsSection = ({ stats, isVisible }) => {
   const responsiveValues = useResponsiveValues();
   return (
@@ -414,15 +313,10 @@ export default function HomePage() {
 
   const lastKnownPhaseRef = useRef(0);
 
-  // --- CLIENT-SIDE REDIRECTION REMOVED ---
-  // This is now handled by the middleware for better performance.
-
   useEffect(() => {
     const unsubscribe = useScrollStore.subscribe((state) => {
       const { scrollPercentage } = state;
       const phaseUnit = 100 / CONSTANTS.TOTAL_PHASES;
-
-      // Simplified phase calculation
       const currentPhase = Math.floor(scrollPercentage / phaseUnit);
 
       if (currentPhase !== lastKnownPhaseRef.current) {
@@ -462,7 +356,6 @@ export default function HomePage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [setScrollPercentage]);
 
-  // Smooth scroll utility function
   const scrollToPercent = (percent, duration = 1500) => {
     const targetScrollY =
       ((document.documentElement.scrollHeight - window.innerHeight) * percent) /
@@ -484,20 +377,21 @@ export default function HomePage() {
   return (
     <>
       <LiquidGlassWrapper>
-        <main className="relative h-screen flex flex-col items-center overflow-hidden">
+        {/* CORRECTED BACKGROUND IMAGE */}
+        <div className="fixed inset-0 z-[-1]">
           <Image
             src="/bluenoise.png"
             alt="Bluenoise background"
             layout="fill"
             objectFit="cover"
-            className="pointer-events-none select-none z-0 opacity-20"
+            className="opacity-20 pointer-events-none select-none"
             priority
           />
+        </div>
 
+        <main className="relative h-screen flex flex-col items-center overflow-hidden">
           <InstructionalText fadeClass={uiState.instructionalFade} />
-
           <ChessMoveOverlays {...uiState} />
-
           <Scene
             scrollToPercent={scrollToPercent}
             totalPhases={CONSTANTS.TOTAL_PHASES}
@@ -527,31 +421,17 @@ export default function HomePage() {
 
         <style jsx global>{`
           @keyframes shimmer {
-            0% {
-              transform: translateX(-100%);
-            }
-            100% {
-              transform: translateX(200%);
-            }
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
           }
-
           .liquid-glass-box:hover {
-            background: linear-gradient(
-              135deg,
-              rgba(255, 255, 255, 0.18) 0%,
-              rgba(255, 255, 255, 0.08) 100%
-            );
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.08) 100%);
             border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 12px 40px rgba(0, 27, 74, 0.4),
-              0 0 60px rgba(51, 187, 255, 0.2),
-              inset 0 1px 0 rgba(255, 255, 255, 0.3),
-              inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+            box-shadow: 0 12px 40px rgba(0, 27, 74, 0.4), 0 0 60px rgba(51, 187, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(255, 255, 255, 0.2);
             transform: translateY(-4px) scale(1.02);
           }
-
           .text-shadow-glow {
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8),
-              0 0 60px rgba(51, 187, 255, 0.4);
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(51, 187, 255, 0.4);
           }
         `}</style>
       </LiquidGlassWrapper>
