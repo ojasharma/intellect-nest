@@ -15,7 +15,7 @@
     "@react-three/postprocessing": "^3.0.4",
     "@vercel/analytics": "^1.5.0",
     "framer-motion": "^12.23.6",
-    "next": "15.3.3",
+    "next": "15.3.6",
     "nodemailer": "^7.0.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
